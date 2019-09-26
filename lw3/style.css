@@ -1,0 +1,76 @@
+body {
+  margin: 0%;
+  transition-duration: .5s;
+}
+.main {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  transition-duration: .1s;
+}
+.month {
+  font-weight: 200;
+}
+.month b {
+  font-weight: 700;
+}
+.calendar {
+  display: flex;
+  justify-content: center;
+}
+.day-column {
+  width: 13%;
+}
+.day {
+  margin: 0%;
+  height: 6vmax;
+  transform: scale(1);
+  border-right: 0.1vmax solid rgb(197, 197, 197);
+  border-bottom: 0.1vmax solid rgb(197, 197, 197);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2vmax;
+  transition-duration: .5s;
+}
+.weekend .day {
+  background-color: rgb(214, 214, 214);
+}
+.weekend .day.nigth {
+  background-color: rgb(32, 32, 32);
+}
+.day.false {
+  opacity: 0.3;
+}
+.day.false.night {
+  opacity: 0.5;
+}
+.day-name {
+  width: 13%;
+  font-size: 2vmax;
+  margin: 0%;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  margin-left: 5%;
+}
+.top p {
+  font-size: 2vmax;
+  font-weight: 200;
+}
+.night {
+  background-color: rgb(15, 15, 15);
+  color:white;
+}
+.holiday {
+  font-size: 2vmax;
+  color: rgb(255, 36, 36);
+  text-align: center;
+}
+.point {
+  width: 1vmax;
+  height: 1vmax;
+  background-color: rgb(255, 36, 36);
+  border-radius: 50%;
+}
