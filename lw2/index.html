@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+<meta charset="utf-8">
+<title>name</title>
+</head>
+
+<body>
+  <form>
+    <p>Фамилия:</p>
+    <input type="text" placeholder="Фамилия" pattern="[А-Яа-яЁё]+$" required>
+    <p>Имя:</p>
+    <input type="text" placeholder="Имя" pattern="[А-Яа-яЁё]+$" required>
+    <p>Email:</p>
+    <input type="email" placeholder="Emalу@my.com" required>
+    <p>Город:</p>
+    <input type="text" placeholder="Город" maxlength="30" pattern="[А-Яа-яЁё]+$" required>
+    <p>Номер:</p>
+    <input type="tel" placeholder="+798 276 251 25" pattern="\+7[0-9]{9}" maxlength="11" required>
+    <p>Примечание:</p>
+    <textarea maxlength="350"></textarea>
+    <p>Получать смс:<input type="checkbox"></p>
+    <input type="submit" value="Заказать">
+  </form>
+</body>
+
+</html>
