@@ -85,16 +85,20 @@ body {
 }
 .top label div {
   cursor: pointer;
-  height: 10vmin;
+  height: 7vmax;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 #theme {
   display: none;
 }
 .check {
-  width: 10vmin;
-  height: 10vmin;
+  width: 3vmax;
+  height: 3vmax;
   transition-duration: .5s;
   position: absolute;
+  user-select: none;
 }
 .check.none {
   transform: scale(0.9);
