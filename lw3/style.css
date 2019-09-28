@@ -26,9 +26,11 @@ body {
   border-right: 0.1vmax solid rgb(197, 197, 197);
   border-bottom: 0.1vmax solid rgb(197, 197, 197);
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-end;
+  flex-direction: column;
   font-size: 2vmax;
+  padding-right: 10%;
   transition-duration: .5s;
 }
 .weekend .day {
@@ -56,7 +58,7 @@ body {
   margin-left: 5%;
 }
 .top p {
-  font-size: 2vmax;
+  font-size: 5vmin;
   font-weight: 200;
 }
 .night {
@@ -64,13 +66,37 @@ body {
   color:white;
 }
 .holiday {
-  font-size: 2vmax;
+  font-size: 1.4vmax;
   color: rgb(255, 36, 36);
   text-align: center;
+  margin: 0%;
+  margin-top: 5%;
 }
 .point {
-  width: 1vmax;
-  height: 1vmax;
+  width: 2.3vmax;
+  height: 2.3vmax;
+  color: white;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: rgb(255, 36, 36);
   border-radius: 50%;
+}
+.top label div {
+  cursor: pointer;
+  height: 10vmin;
+}
+#theme {
+  display: none;
+}
+.check {
+  width: 10vmin;
+  height: 10vmin;
+  transition-duration: .5s;
+  position: absolute;
+}
+.check.none {
+  transform: scale(0.9);
+  opacity: 0;
 }

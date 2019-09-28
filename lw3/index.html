@@ -10,7 +10,12 @@
 <body class="main">
   <div class="top">
     <h1 class="month"><b>September</b>2019</h1>
-    <p>Night theme<input id="theme" onclick="theme()" type="checkbox"></p>
+    <label for="theme"><input id="theme" onclick="theme()" type="checkbox">
+      <div>
+        <img src="sun.png" class="check">
+        <img src="moon.png" class="check none">
+      </div>
+    </label>
   </div>
   <div class="calendar">
     <div class="day-name">Mon</div>
@@ -57,11 +62,11 @@
     <div class="day-column">
       <div class="day false">30</div>
       <div class="day">6</div>
-      <div class="day">
-        <p class="holiday">13 PD</p>
+      <div class="day">13
+        <p class="holiday">Programmer's day</p>
       </div>
       <div class="day">20</div>
-      <div class="day">27<div class="point"></div>
+      <div class="day"><div class="point">27</div>
       </div>
       <div class="day false">4</div>
     </div>
