@@ -2,9 +2,8 @@ body {
   margin: 0%;
   transition-duration: .5s;
 }
-.main {
+.calendar {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  transition-duration: .1s;
 }
 .month {
   font-weight: 200;
@@ -12,7 +11,7 @@ body {
 .month b {
   font-weight: 700;
 }
-.calendar {
+.day-row {
   display: flex;
   justify-content: center;
 }
@@ -31,19 +30,31 @@ body {
   flex-direction: column;
   font-size: 2vmax;
   padding-right: 10%;
+  color: black;
   transition-duration: .5s;
+}
+.night .day {
+  color: white;
+  border-right: 0.1vmax solid rgb(131, 131, 131);
+  border-bottom: 0.1vmax solid rgb(131, 131, 131);
 }
 .weekend .day {
   background-color: rgb(214, 214, 214);
 }
-.weekend .day.nigth {
-  background-color: rgb(32, 32, 32);
+.night .weekend .day {
+  background-color: rgb(26, 26, 26);
 }
-.day.false {
-  opacity: 0.3;
-}
-.day.false.night {
+.day.out {
   opacity: 0.5;
+}
+.weekend .out {
+  background:none;
+}
+.night .weekend .out {
+  background:none;
+}
+.night .day.out{
+  opacity: 0.2;
 }
 .day-name {
   width: 13%;
@@ -73,8 +84,8 @@ body {
   margin-top: 5%;
 }
 .point {
-  width: 2.3vmax;
-  height: 2.3vmax;
+  width: 2.4vmax;
+  height: 2.4vmax;
   color: white;
   overflow: hidden;
   display: flex;
@@ -94,8 +105,7 @@ body {
   display: none;
 }
 .check {
-  width: 3vmax;
-  height: 3vmax;
+  width: 3.5%;
   transition-duration: .5s;
   position: absolute;
   user-select: none;

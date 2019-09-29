@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="main">
+<body id="calendar-id" class="calendar">
   <div class="top">
     <h1 class="month"><b>September</b>2019</h1>
     <label for="theme"><input id="theme" onclick="theme()" type="checkbox">
@@ -17,7 +17,7 @@
       </div>
     </label>
   </div>
-  <div class="calendar">
+  <div class="day-row">
     <div class="day-name">Mon</div>
     <div class="day-name">Tue</div>
     <div class="day-name">Wed</div>
@@ -26,9 +26,9 @@
     <div class="day-name">Sat</div>
     <div class="day-name">Sun</div>
   </div>
-  <div class="calendar">
+  <div class="day-row">
     <div class="day-column">
-      <div class="day false">26</div>
+      <div class="day out">26</div>
       <div class="day">2</div>
       <div class="day">9</div>
       <div class="day">16</div>
@@ -36,31 +36,31 @@
       <div class="day">30</div>
     </div>
     <div class="day-column">
-      <div class="day false">27</div>
+      <div class="day out">27</div>
       <div class="day">3</div>
       <div class="day">10</div>
       <div class="day">17</div>
       <div class="day">24</div>
-      <div class="day false">1</div>
+      <div class="day out">1</div>
     </div>
     <div class="day-column">
-      <div class="day false">28</div>
+      <div class="day out">28</div>
       <div class="day">4</div>
       <div class="day">11</div>
       <div class="day">18</div>
       <div class="day">25</div>
-      <div class="day false">2</div>
+      <div class="day out">2</div>
     </div>
     <div class="day-column">
-      <div class="day false">29</div>
+      <div class="day out">29</div>
       <div class="day">5</div>
       <div class="day">12</div>
       <div class="day">19</div>
       <div class="day">26</div>
-      <div class="day false">3</div>
+      <div class="day out">3</div>
     </div>
     <div class="day-column">
-      <div class="day false">30</div>
+      <div class="day out">30</div>
       <div class="day">6</div>
       <div class="day">13
         <p class="holiday">Programmer's day</p>
@@ -68,15 +68,15 @@
       <div class="day">20</div>
       <div class="day"><div class="point">27</div>
       </div>
-      <div class="day false">4</div>
+      <div class="day out">4</div>
     </div>
     <div class="day-column weekend">
-      <div class="day false">31</div>
+      <div class="day out">31</div>
       <div class="day">7</div>
       <div class="day">14</div>
       <div class="day">21</div>
       <div class="day">28</div>
-      <div class="day false">5</div>
+      <div class="day out">5</div>
     </div>
     <div class="day-column weekend">
       <div class="day">1</div>
@@ -84,7 +84,7 @@
       <div class="day">15</div>
       <div class="day">22</div>
       <div class="day">29</div>
-      <div class="day false">6</div>
+      <div class="day out">6</div>
     </div>
   </div>
   <script src="script.js"></script>
