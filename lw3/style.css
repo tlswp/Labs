@@ -32,6 +32,41 @@ body {
 #theme {
   display: none;
 }
+.top label div {
+  cursor: pointer;
+  height: 7vmax;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.check {
+  width: 3.5%;
+  transition-duration: .5s;
+  position: absolute;
+  user-select: none;
+}
+.check.none {
+  transform: scale(0.9);
+  opacity: 0;
+}
+.holiday {
+  font-size: 1.4vmax;
+  color: rgb(255, 36, 36);
+  text-align: center;
+  margin: 0%;
+  margin-top: 5%;
+}
+.point {
+  width: 2.4vmax;
+  height: 2.4vmax;
+  color: white;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(255, 36, 36);
+  border-radius: 50%;
+}
 /* day theme styles */
 .day {
   margin: 0%;
@@ -61,41 +96,6 @@ body {
   width: 13%;
   font-size: 2vmax;
   margin: 0%;
-}
-.holiday {
-  font-size: 1.4vmax;
-  color: rgb(255, 36, 36);
-  text-align: center;
-  margin: 0%;
-  margin-top: 5%;
-}
-.point {
-  width: 2.4vmax;
-  height: 2.4vmax;
-  color: white;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgb(255, 36, 36);
-  border-radius: 50%;
-}
-.top label div {
-  cursor: pointer;
-  height: 7vmax;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.check {
-  width: 3.5%;
-  transition-duration: .5s;
-  position: absolute;
-  user-select: none;
-}
-.check.none {
-  transform: scale(0.9);
-  opacity: 0;
 }
 /* night theme styles */
 .night .day {
