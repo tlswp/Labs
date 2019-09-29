@@ -18,6 +18,21 @@ body {
 .day-column {
   width: 13%;
 }
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  margin-left: 5%;
+}
+.top p {
+  font-size: 5vmin;
+  font-weight: 200;
+}
+#theme {
+  display: none;
+}
+/* day theme styles */
 .day {
   margin: 0%;
   height: 6vmax;
@@ -33,16 +48,8 @@ body {
   color: black;
   transition-duration: .5s;
 }
-.night .day {
-  color: white;
-  border-right: 0.1vmax solid rgb(131, 131, 131);
-  border-bottom: 0.1vmax solid rgb(131, 131, 131);
-}
 .weekend .day {
   background-color: rgb(214, 214, 214);
-}
-.night .weekend .day {
-  background-color: rgb(26, 26, 26);
 }
 .day.out {
   opacity: 0.5;
@@ -50,31 +57,10 @@ body {
 .weekend .out {
   background:none;
 }
-.night .weekend .out {
-  background:none;
-}
-.night .day.out{
-  opacity: 0.2;
-}
 .day-name {
   width: 13%;
   font-size: 2vmax;
   margin: 0%;
-}
-.top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 80%;
-  margin-left: 5%;
-}
-.top p {
-  font-size: 5vmin;
-  font-weight: 200;
-}
-.night {
-  background-color: rgb(15, 15, 15);
-  color:white;
 }
 .holiday {
   font-size: 1.4vmax;
@@ -101,9 +87,6 @@ body {
   justify-content: center;
   align-items: center;
 }
-#theme {
-  display: none;
-}
 .check {
   width: 3.5%;
   transition-duration: .5s;
@@ -113,4 +96,23 @@ body {
 .check.none {
   transform: scale(0.9);
   opacity: 0;
+}
+/* night theme styles */
+.night .day {
+  color: white;
+  border-right: 0.1vmax solid rgb(131, 131, 131);
+  border-bottom: 0.1vmax solid rgb(131, 131, 131);
+}
+.night .weekend .day {
+  background-color: rgb(26, 26, 26);
+}
+.night .weekend .out {
+  background:none;
+}
+.night .day.out{
+  opacity: 0.2;
+}
+.night {
+  background-color: rgb(15, 15, 15);
+  color:white;
 }

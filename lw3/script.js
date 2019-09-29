@@ -1,6 +1,6 @@
 var myCheck = document.getElementById('theme'),
-myMain = document.getElementById('calendar-id');
-var checkImg = document.querySelectorAll('img.check');
+myMain = document.getElementById('calendar-id'),
+checkImg = document.querySelectorAll('img.check');
 function theme() {
   if (myCheck.checked) {
     myMain.classList.toggle('night');
