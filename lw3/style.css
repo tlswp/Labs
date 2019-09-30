@@ -29,15 +29,15 @@ body {
   font-size: 5vmin;
   font-weight: 200;
 }
-#theme {
-  display: none;
-}
-.top label div {
+.top label span {
   cursor: pointer;
   height: 7vmax;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+#theme {
+  display: none;
 }
 .check {
   width: 3.5%;
@@ -89,7 +89,7 @@ body {
 .day.out {
   opacity: 0.5;
 }
-.weekend .out {
+.weekend .outside {
   background:none;
 }
 .day-name {
@@ -106,10 +106,10 @@ body {
 .night .weekend .day {
   background-color: rgb(26, 26, 26);
 }
-.night .weekend .out {
+.night .weekend .outside {
   background:none;
 }
-.night .day.out{
+.night .day.outside{
   opacity: 0.2;
 }
 .night {
