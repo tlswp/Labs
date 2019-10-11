@@ -1,5 +1,5 @@
 var myCheck = document.getElementById('theme'),
-myMain = document.getElementById('calendar-id'),
+myMain = document.getElementById('main'),
 day = document.getElementsByClassName('day'),
 checkImg = document.querySelectorAll('img.check');
 var i = 0;

@@ -30,13 +30,25 @@ body {
   border: 0.1vmax solid rgb(34, 33, 33);
   border-top: 0;
 }
-.main p.data {
+.main .data p {
+  margin: 0%;
+  padding-left: 1%;
+  width: 20%;
+}
+.data .discription {
+  opacity: 0.5;
+}
+.main div.data {
   font-size: 2vmax;
   width: 95%;
   margin: 0%;
+  margin-top: 1%;
+  display: flex;
+  justify-content: space-between;
 }
 .current .data.current {
-  background-color: rgb(177, 219, 255);
+  background-color: rgb(209, 233, 255);
+  border: 0.05vmax solid rgb(177, 219, 255);
 }
 .data-block.current {
   opacity: 1;
