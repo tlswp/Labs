@@ -1,5 +1,5 @@
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Heebo', sans-serif;
   background-color: rgb(235, 235, 235);
 }
 .col2 {
@@ -34,6 +34,9 @@ body {
   margin: 0%;
   padding-left: 1%;
   width: 20%;
+  height: 3vmax;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .data .discription {
   opacity: 0.5;
@@ -52,4 +55,10 @@ body {
 }
 .data-block.current {
   opacity: 1;
+}
+.data.current p {
+  width: 50%;
+}
+.data.current p.discription {
+  width: 20%;
 }
