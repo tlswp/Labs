@@ -2,25 +2,25 @@ body {
   font-family: 'Heebo', sans-serif;
   background-color: rgb(235, 235, 235);
 }
-.col2 {
+.container-container {
   width: 48%;
 }
 .main {
   display: flex;
   justify-content: space-around;
 }
-.main .search {
+.main .directory-way {
   width: 100%;
   border: 0.1vmax solid rgb(34, 33, 33);
   padding: 0;
   font-size: 2vmax;
   background-color: white;
 }
-.main .search p {
+.main .directory-way span {
   margin: 0%;
   padding-left: 1%;
 }
-.data-block {
+.directory {
   width: 100%;
   height: 20vmax;
   background-color: white;
@@ -30,7 +30,7 @@ body {
   border: 0.1vmax solid rgb(34, 33, 33);
   border-top: 0;
 }
-.main .data p {
+.main .item span {
   margin: 0%;
   padding-left: 1%;
   width: 20%;
@@ -38,27 +38,28 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.data .discription {
+.item .discription {
   opacity: 0.5;
 }
-.main div.data {
+.main div.item {
   font-size: 2vmax;
   width: 95%;
   margin: 0%;
   margin-top: 1%;
   display: flex;
   justify-content: space-between;
+  border: 0.05vmax solid rgba(255, 255, 255, 0);
 }
-.current .data.current {
+.selected .item.selected {
   background-color: rgb(209, 233, 255);
   border: 0.05vmax solid rgb(177, 219, 255);
 }
-.data-block.current {
+.directory.selected {
   opacity: 1;
 }
-.data.current p {
+.item.selected span {
   width: 50%;
 }
-.data.current p.discription {
+.item.selected span.discription {
   width: 20%;
 }
