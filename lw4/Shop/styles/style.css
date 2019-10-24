@@ -41,6 +41,30 @@ header .links {
   align-items: center;
 }
 
+.link:nth-child(2):after {
+  content: "";
+  background-image: url('../images/Comparison.png');
+  background-size: 1.2vmax 1.2vmax;
+  width: 1.2vmax;
+  height: 1.2vmax;
+}
+
+.link:nth-child(3):after {
+  content: "";
+  background-image: url('../images/favorite.png');
+  background-size: 1.2vmax 1.2vmax;
+  width: 1.2vmax;
+  height: 1.2vmax;
+}
+
+.link:nth-child(4):after {
+  content: "";
+  background-image: url('../images/cart.png');
+  background-size: 1.2vmax 1.2vmax;
+  width: 1.2vmax;
+  height: 1.2vmax;
+}
+
 .catalog-items {
   padding: 0% 1vmax;
 }
@@ -105,7 +129,7 @@ footer {
   cursor: pointer;
 }
 
-.goods-container {
+.product-container {
   width: 80%;
   display: flex;
   flex-wrap: wrap;
@@ -113,7 +137,7 @@ footer {
   font-size: 1vmax;
 }
 
-.goods-item {
+.product-item {
   width: 23%;
   margin: 1%;
   display: flex;
@@ -122,11 +146,16 @@ footer {
   background-color: white;
 }
 
-.goods-item .item-description {
+.product-item .item-description {
   padding: 0 5%;
+  text-decoration: none;
 }
 
-.goods-item img {
+.item-price:after {
+  content: "\20BD";
+}
+
+.product-item img {
   width: 80%;
 }
 

@@ -4,10 +4,9 @@ var searchStr = document.getElementsByClassName('search')
 var newStr = document.getElementsByClassName('new')
 
 function replaceText() {
-  var regex = new RegExp(searchStr[0].value, 'g');
-  let matchAl = text.search(regex);
-  if (matchAl > 0) {
-    var regex = new RegExp(searchStr[0].value, 'g');
+  var regex = new RegExp(searchStr[0].value, 'gi');
+  var matchAl = text.search(regex);
+  if (matchAl >= 0 && searchStr[0].value != "") {
     text = text.replace(regex, newStr[0].value);
     myText[0].innerHTML = text;
     matchAl = text.matchAll(regex);
