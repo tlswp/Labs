@@ -7,10 +7,10 @@ function flatArray(myArray) {
   }
   alert(myArray);
 }
-flatArray([12, ["ru"],
-  [""],
+flatArray([12, ['ru'],
+  [''],
   123, '424', 5325, [NaN],
   [],
-  2, ["www"],
+  2, ['www'],
   null
 ]);
