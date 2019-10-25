@@ -10,4 +10,4 @@ function isArrayEqual(array1, array2) {
     alert(false);
   }
 }
-isArrayEqual([1, 2, 3], [1, 2, 3]);
+isArrayEqual([1, 2, false], [1, 2, false]);

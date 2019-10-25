@@ -4,12 +4,12 @@ var searchStr = document.getElementsByClassName('search')
 var newStr = document.getElementsByClassName('new')
 
 function replaceText() {
-  var regex = new RegExp(searchStr[0].value, 'gi');
-  var matchAl = text.search(regex);
-  if (matchAl >= 0 && searchStr[0].value != "") {
-    text = text.replace(regex, newStr[0].value);
+  var myRegExp = new RegExp(searchStr[0].value, 'gi');
+  var index = text.search(myRegExp);
+  if (index >= 0 && searchStr[0].value != "") {
+    text = text.replace(myRegExp, newStr[0].value);
     myText[0].innerHTML = text;
-    matchAl = text.matchAll(regex);
+
   } else {
     alert('Ничего не найдено!!!');
   }

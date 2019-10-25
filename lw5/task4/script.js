@@ -9,7 +9,7 @@ function flatArray(myArray) {
 }
 flatArray([12, ["ru"],
   [""],
-  123, '424', 5325, [NaN],
+  123, 424, 5325, [NaN],
   [],
   2, ["www"],
   null
