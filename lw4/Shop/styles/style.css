@@ -40,7 +40,15 @@ header .links {
   display: flex;
   align-items: center;
 }
-
+.link:after {
+  margin-left: 0.5vw;
+}
+.logo {
+  background-image: url('../images/logo.png');
+  background-size: 2vmax 2vmax;
+  width: 2vmax;
+  height: 2vmax;
+}
 .link:nth-child(2):after {
   content: "";
   background-image: url('../images/Comparison.png');
