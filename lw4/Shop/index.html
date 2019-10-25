@@ -2,7 +2,7 @@
 <html lang="ru">
 
 <head>
-  <link rel="stylesheet" href="styles/item.css">
+  <link rel="stylesheet" href="styles/style.css">
   <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="fonts/font.css">
   <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 
 <body>
   <header>
-    <img src="images/logo.png" alt="">
+    <div class="logo"></div>
     <div class="links">
       <span class="link">Каталог</span>
       <span class="link">Сравнение</span>
@@ -22,6 +22,7 @@
   </header>
 
   <div class="content">
+
     <aside class="catalog-container">
       <input placeholder="Поиск по категории" class="catalog-search">
       <div class="catalog">
@@ -38,39 +39,38 @@
         </div>
       </div>
     </aside>
-    <main>
-      <div class="product-page">
-        <img alt="" src="images/iphone11-black.png">
-        <div class="information">
-          <strong class="product-name">6.1" Смартфон Apple iPhone 11 256 ГБ черный</strong>
-          <div class="price">73 999 &#8381;<span class="add-cart">Добавить в корзину</span></div>
-          <div class="rating">Оценка товара: 4.4 из 5</div>
-          <p class="description"><strong>Описание 6.1" Смартфон Apple iPhone 11 256 ГБ черный</strong><br>Ничего лишнего. Только самое. Система двух камер не оставит никого из ваших друзей за кадром. Самый быстрый процессор iPhone и мощный аккумулятор позволят больше делать
-            и тратить меньше времени на подзарядку. А высочайшее качество видео на iPhone означает, что ваши истории станут ещё ярче и детальнее.</p>
-        </div>
+    <main class="product-container">
+      <div class="product-item">
+        <a href="item.html">
+          <img alt="" src="images/iphone11-black.png">
+          <div class="item-description">6.1" Смартфон Apple iPhone 11 256 ГБ черный</div>
+        </a>
+        <div class="add-cart"><strong class="item-price">73 999</strong>Добавить в корзину</div>
       </div>
-      <strong class="product-container-name">Вам может понравиться:</strong>
-      <div class="product-container">
-        <div class="product-item">
-          <img alt="" src="images/iphone11-white.png">
-          <div class="item-description">6.1" Смартфон Apple iPhone 11 256 ГБ белый</div>
-          <div class="not-available">Нет в наличии</div>
-        </div>
-        <div class="product-item">
-          <img alt="" src="images/iphone11-yellow.png">
-          <div class="item-description">6.1" Смартфон Apple iPhone 11 256 ГБ желтый</div>
-          <div class="not-available">Нет в наличии</div>
-        </div>
-        <div class="product-item">
-          <img alt="" src="images/iphone11-red.png">
-          <div class="item-description">6.1" Смартфон Apple iPhone 11 256 ГБ красный</div>
-          <div class="not-available">Нет в наличии</div>
-        </div>
-        <div class="product-item">
-          <img alt="" src="images/iphone11-green.png">
-          <div class="item-description">6.1" Смартфон Apple iPhone 11 256 ГБ зеленый</div>
-          <div class="not-available">Нет в наличии</div>
-        </div>
+      <div class="product-item">
+        <img alt="" src="images/iphone11-white.png">
+        <div class="item-description">6.1" Смартфон Apple iPhone 11 256 ГБ белый</div>
+        <div class="not-available">Нет в наличии</div>
+      </div>
+      <div class="product-item">
+        <img alt="" src="images/iphone11-yellow.png">
+        <div class="item-description">6.1" Смартфон Apple iPhone 11 256 ГБ желтый</div>
+        <div class="not-available">Нет в наличии</div>
+      </div>
+      <div class="product-item">
+        <img alt="" src="images/iphone11-purple.png">
+        <div class="item-description">6.1" Смартфон Apple iPhone 11 256 ГБ пурпурный</div>
+        <div class="not-available">Нет в наличии</div>
+      </div>
+      <div class="product-item">
+        <img alt="" src="images/iphone11-red.png">
+        <div class="item-description">6.1" Смартфон Apple iPhone 11 256 ГБ красный</div>
+        <div class="not-available">Нет в наличии</div>
+      </div>
+      <div class="product-item">
+        <img alt="" src="images/iphone11-green.png">
+        <div class="item-description">6.1" Смартфон Apple iPhone 11 256 ГБ зеленый</div>
+        <div class="not-available">Нет в наличии</div>
       </div>
     </main>
   </div>
