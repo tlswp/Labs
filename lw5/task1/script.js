@@ -1,16 +1,28 @@
-var text = 'Веб-страница - самостоятельная часть веб-сайта; документ, снабженный уникальным адресом (URL). Веб-страница может иметь статическое или динамическое построение. Обычно веб-страницы организуется в виде гипертекста с включениями текста, графики, звука, видео или анимацию. В сети Интернет просмотр веб-страниц осуществляется посредством браузера.';
-var myText = document.getElementsByClassName('text');
-var searchStr = document.getElementsByClassName('search')
-var newStr = document.getElementsByClassName('new')
+var text = document.querySelector('.text').innerHTML;
+var err = 'Ошибка';
+var textForUi = document.querySelector('.text');
+var btn = document.querySelector('.btn');
 
-function replaceText() {
-  var myRegExp = new RegExp(searchStr[0].value, 'gi');
-  var index = text.search(myRegExp);
-  if (index >= 0 && searchStr[0].value != '') {
-    text = text.replace(myRegExp, newStr[0].value);
-    myText[0].innerHTML = text;
-
+function replaceText(text, searchStr, newStr) {
+  var searchStrRegExp = new RegExp(searchStr, 'gi');
+  var index = text.search(searchStrRegExp);
+  if (index >= 0 && searchStr != '') {
+    text = text.replace(searchStrRegExp, newStr);
+    textForUi.innerHTML = text;
+    return true;
   } else {
-    alert('Ничего не найдено!!!');
+    return false;
   }
 }
+
+function replaceTextUi() {
+  var text = document.querySelector('.text').innerHTML;
+  var searchStr = document.querySelector('.search').value;
+  var newStr = document.querySelector('.new').value;
+  if (replaceText(text, searchStr, newStr) === true) {
+    replaceText(text, searchStr, newStr);
+  } else {
+    alert(false);
+  }
+}
+btn.addEventListener('click', replaceTextUi);

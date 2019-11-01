@@ -1,13 +1,15 @@
 function isArrayEqual(array1, array2) {
-  var s = true;
-  var n = true;
-  if (array1.length == array2.length) {
+  var booleanStatus = true;
+  if (array1.length === array2.length) {
     for (var i = 0; i < array1.length; i++) {
-      n = array1[i] === array2[i];
+      if (typeof(array1[i]) !== typeof(array2[i]) || array1[i] !== array2[i]) {
+        booleanStatus = false;
+      }
     }
-    alert(n && true);
+    booleanStatus = booleanStatus && true
+    return booleanStatus;
   } else {
-    alert(false);
+    return false;
   }
 }
-isArrayEqual([1, 2, false], [1, 2, false]);
+isArrayEqual(['a', 2], ['a', 2]);
