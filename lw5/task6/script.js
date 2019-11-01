@@ -1,4 +1,4 @@
-selectedTrack = 1;
+var selectedTrack = 0;
 var Player = {
   track: ['song.mp3', 'song2.mp3', 'song3.mp3'],
   status: 'pause',

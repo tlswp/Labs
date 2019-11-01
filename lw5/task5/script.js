@@ -4,12 +4,12 @@ function isNull(data) {
 
 function check(data, expectedType) {
   if (expectedType === 'array') {
-    a = expectedType === 'array' === Array.isArray(data);
-    return a;
+    booleanStatus = expectedType === 'array' === Array.isArray(data);
+    return booleanStatus;
   } else {;
     if (expectedType === 'null') {
-      a = expectedType === 'null' === isNull(data);
-      return a;
+      booleanStatus = expectedType === 'null' === isNull(data);
+      return booleanStatus;
     } else {
       if (expectedType === typeof(data) && expectedType !== 'null' && expectedType !== 'array') {
         return true;
