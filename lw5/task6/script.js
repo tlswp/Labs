@@ -1,9 +1,13 @@
-var selectedTrack = 0;
 var Player = {
   track: ['song.mp3', 'song2.mp3', 'song3.mp3'],
   status: 'pause',
+  selectedTrack: 0,
   display: function() {
-    return 'Track: ' + this.track[selectedTrack] + ' Status: ' + this.status;
+    if (this.track.length > 0) {
+      return 'Track: ' + this.track[this.selectedTrack] + ' Status: ' + this.status;
+    } else {
+      return 'No tracks found'
+    }
   },
   play: function() {
     this.status = 'play';
@@ -12,11 +16,9 @@ var Player = {
     this.status = 'pause';
   },
   next: function() {
-    // TODO
-    selectedTrack = (selectedTrack + 1) % this.track.length;
+    this.selectedTrack = (this.selectedTrack + 1) % this.track.length;
   },
   prev: function() {
-    // TODO
-    selectedTrack = (selectedTrack - 1 + this.track.length) % this.track.length;
+    this.selectedTrack = (this.selectedTrack - 1 + this.track.length) % this.track.length;
   }
 };
