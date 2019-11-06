@@ -97,7 +97,8 @@ body {
   font-size: 1.5vw;
 }
 
-@media (max-width: 700px) {
+
+/*@media (max-width: 700px) {
   body {
     font-size: 5vw;
   }
@@ -133,7 +134,7 @@ body {
   .message-form__button {
     font-size: 3vw;
   }
-}
+}*/
 
 @media handheld {
   body {
