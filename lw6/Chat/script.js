@@ -19,7 +19,7 @@ function sendMessage(adressee) {
     chatMessage.appendChild(chatMessageText);
     chatMessage.appendChild(chatMessageAvatar);
   }
-  text = '';
+  document.querySelector('.message-form__text').value = '';
 }
 window.onsubmit = function() {
   return false;
