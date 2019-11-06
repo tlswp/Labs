@@ -19,6 +19,7 @@ function sendMessage(adressee) {
     chatMessage.appendChild(chatMessageText);
     chatMessage.appendChild(chatMessageAvatar);
   }
+  text = '';
 }
 window.onsubmit = function() {
   return false;
