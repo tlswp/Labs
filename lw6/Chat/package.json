@@ -1,0 +1,24 @@
+{
+  "name": "npm-automation-env",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "watch": {
+    "validate-html": "index.html",
+    "validate-css": "style.css",
+    "jshint": "script.js"
+  },
+  "scripts": {
+    "server": "live-server",
+    "validate-html": "html-validate index.html",
+    "validate-css": "css-validator style.css",
+    "jshint": "jshint script.js",
+    "watch": "npm-watch",
+    "postinstall": "npm i -g live-server css-validator html-validate jshint"
+  },
+  "author": "Kalagin Ivan",
+  "license": "ISC",
+  "devDependencies": {
+    "npm-watch": "^0.6.0"
+  }
+}
