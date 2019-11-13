@@ -16,9 +16,13 @@ var Player = {
     this.status = 'pause';
   },
   next: function() {
-    this.selectedTrack = (this.selectedTrack + 1) % this.track.length;
+    if (this.track.length > 0) {
+      this.selectedTrack = (this.selectedTrack + 1) % this.track.length;
+    }
   },
   prev: function() {
-    this.selectedTrack = (this.selectedTrack - 1 + this.track.length) % this.track.length;
+    if (this.track.length > 0) {
+      this.selectedTrack = (this.selectedTrack - 1 + this.track.length) % this.track.length;
+    }
   }
 };

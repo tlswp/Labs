@@ -1,13 +1,14 @@
+'use strict';
 var button = document.querySelector('.message-form__button');
-var chatMessageScroll = document.querySelector('.chat-messages-scroll');
+var chat = document.querySelector('.chat');
 
-function sendMessage(adressee) {
+function sendMessage(recipient) {
   var text = document.querySelector('.message-form__text').value;
   if (!(/^\s+$/.test(text)) && text !== '') {
     text = String(text);
     var chatMessage = document.createElement('div');
-    if (adressee) {
-      chatMessage.classList.add('chat-message', 'chat-message_addressee');
+    if (recipient) {
+      chatMessage.classList.add('chat-message', 'chat-message_recipient');
     } else {
       chatMessage.classList.add('chat-message');
     }
@@ -20,7 +21,7 @@ function sendMessage(adressee) {
     chatMessages.appendChild(chatMessage);
     chatMessage.appendChild(chatMessageText);
     chatMessage.appendChild(chatMessageAvatar);
-    chatMessageScroll.scrollTop = chatMessageScroll.scrollHeight;
+    chat.scrollTop = chat.scrollHeight;
   }
   document.querySelector('.message-form__text').value = '';
 }

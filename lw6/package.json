@@ -1,0 +1,33 @@
+{
+  "name": "npm-automation-env",
+  "version": "1.0.9",
+  "description": "",
+  "main": "index.js",
+  "watch": {
+    "validate-html": {
+      "patterns": [
+        "Chat"
+      ],
+      "extensions": "html",
+      "quiet": true,
+      "legacyWatch": true
+    },
+    "validate-css": "Chat/css/styles.css",
+    "jshint": "Chat/"
+  },
+  "scripts": {
+    "server": "live-server Chat",
+    "validate-html": "html-validate Chat",
+    "validate-css": "css-validator Chat/style.css",
+    "jshint": "jshint Chat/",
+    "watch": "npm-watch",
+    "dev-mode": "npm-run-all --parallel server watch",
+    "postinstall": "npm i -g live-server css-validator html-validate jshint"
+  },
+  "author": "Kalagin Ivan",
+  "license": "ISC",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "npm-watch": "^0.6.0"
+  }
+}
