@@ -6,13 +6,13 @@
   "watch": {
     "validate-html": {
       "patterns": [
-        "Chat"
+        "Chat", "task3"
       ],
       "extensions": "html",
       "quiet": true,
       "legacyWatch": true
     },
-    "validate-css": "Chat/css/styles.css",
+    "validate-css": "Chat/style.css",
     "jshint": "Chat/"
   },
   "scripts": {
