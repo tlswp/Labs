@@ -3,16 +3,14 @@ function isTimeRangesIntersect(timeRange1, timeRange2) {
     /\d{2}:(?=[0-5]\d$)/.test(timeRange1[1]) &&
     /\d{2}:(?=[0-5]\d$)/.test(timeRange2[0]) && 
     /\d{2}:(?=[0-5]\d$)/.test(timeRange2[1]) && 
-    timeRange1[0] < '23' && timeRange1[1] < '23' && 
-    timeRange2[0] < '23' && timeRange2[1] < '23' &&
+    timeRange1[0] < '24' && timeRange1[1] < '24' && 
+    timeRange2[0] < '24' && timeRange2[1] < '24' &&
     timeRange1[0] < timeRange1[1] && 
     timeRange2[0] < timeRange2[1] && 
     timeRange1[1] >= timeRange2[0] && 
     timeRange1[0] <= timeRange2[1];
-  if (Array.isArray(timeRange1) && Array.isArray(timeRange2)) {
-    if (validateDate) {
+  if (Array.isArray(timeRange1) && Array.isArray(timeRange2) && validateTimeRanges) {
       return true;
-    }
   }
   return false;
 }
