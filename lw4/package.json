@@ -12,14 +12,14 @@
       "quiet": true,
       "legacyWatch": true
     },
-    "validate-css": "task3/style.css",
-    "jshint": "task3/"
+    "validate-css": "Shop/style.css",
+    "jshint": "Shop/"
   },
   "scripts": {
-    "server": "live-server task3",
-    "validate-html": "html-validate task3",
-    "validate-css": "css-validator task3/style.css",
-    "jshint": "jshint task3/",
+    "server": "live-server Shop",
+    "validate-html": "html-validate Shop",
+    "validate-css": "css-validator Shop/style.css",
+    "jshint": "jshint Shop/",
     "watch": "npm-watch",
     "dev-mode": "npm-run-all --parallel server watch",
     "postinstall": "npm i -g live-server css-validator html-validate jshint"

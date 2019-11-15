@@ -1,3 +1,4 @@
+'use strict';
 var button = document.querySelector('.form-submit');
 window.onsubmit = function() {
   return false;
