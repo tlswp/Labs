@@ -9,7 +9,7 @@ function replaceText(text, searchStr, newStr) {
       return text.replace(searchStrRegExp, newStr);
     }
   }
-  return false;
+  return text;
 }
 
 function replaceTextUi() {
