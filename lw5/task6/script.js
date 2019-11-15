@@ -6,7 +6,8 @@ var Player = {
     if (this.track.length > 0) {
       return 'Track: ' + this.track[this.selectedTrack] + ' Status: ' + this.status;
     } else {
-      return 'No tracks found'
+      selectedTrack: 0
+      return 'No tracks found';
     }
   },
   play: function() {
