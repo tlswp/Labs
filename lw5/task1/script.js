@@ -6,8 +6,7 @@ function replaceText(text, searchStr, newStr) {
     var searchStrRegExp = new RegExp(searchStr, 'gi');
     var index = text.search(searchStrRegExp);
     if (index >= 0 && !(/^\s+$/.test(newStr)) && searchStr !== '') {
-      window.text = text.replace(searchStrRegExp, newStr);
-      return window.text;
+      return text.replace(searchStrRegExp, newStr);
     }
   }
   return false;
@@ -18,7 +17,6 @@ function replaceTextUi() {
   var searchStr = document.querySelector('.search').value;
   var newStr = document.querySelector('.new').value;
   var textForUi = document.querySelector('.text');
-  replaceText(text, searchStr, newStr);
-  textForUi.textContent = text;
+  textForUi.textContent = replaceText(text, searchStr, newStr);
 }
 btn.addEventListener('click', replaceTextUi);
