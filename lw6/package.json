@@ -6,20 +6,20 @@
   "watch": {
     "validate-html": {
       "patterns": [
-        "Chat", "task3"
+        "src"
       ],
       "extensions": "html",
       "quiet": true,
       "legacyWatch": true
     },
-    "validate-css": "task3/style.css",
-    "jshint": "task3/"
+    "validate-css": "src/task2/style.css src/task3/style.css",
+    "jshint": "src/"
   },
   "scripts": {
-    "server": "live-server task3",
-    "validate-html": "html-validate task3",
-    "validate-css": "css-validator task3/style.css",
-    "jshint": "jshint task3/",
+    "server": "live-server src",
+    "validate-html": "html-validate src",
+    "validate-css": "css-validator src/task2/style.css src/task3/style.css",
+    "jshint": "jshint src/",
     "watch": "npm-watch",
     "dev-mode": "npm-run-all --parallel server watch",
     "postinstall": "npm i -g live-server css-validator html-validate jshint"
