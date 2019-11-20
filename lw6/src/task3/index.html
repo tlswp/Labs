@@ -11,22 +11,24 @@
   <div class="content">
     <form class="form">
       <div class="form-item">
-        <input type="text" placeholder="Калинин Александр Сергеевич" class="form-item__text">
+        <input type="text" placeholder="Калинин Александр Сергеевич" class="form-item__input">
         <div class="form-item__error">Используйте кириллицу! Введите полное ФИО!</div>
       </div>
       <div class="form-item">
-        <input type="text" placeholder="Email@mail.com" class="form-item__text">
+        <input type="text" placeholder="Email@mail.com" class="form-item__input">
         <div class="form-item__error">Неправильно указан email!</div>
       </div>
-      <select class="form-select">
+      <div class="form-item">
+        <select class="form-item_select">
               <option class="form-select__item">Москва</option>
               <option class="form-select__item">Санкт-Петербург</option>
             </select>
+      </div>
       <div class="form-item">
-        <input type="password" placeholder="password" class="form-item__text">
+        <input type="password" placeholder="password" class="form-item__input">
         <div class="form-item__error">Используйте латиницу. Введите хотябы одну цифру и заглавную букву! Минимум 8 символов!</div>
       </div>
-      <button type="submit" class="form-submit">Зарегистрировать</button>
+      <button type="submit" class="form_submit">Зарегистрировать</button>
     </form>
   </div>
   <script src="script.js"></script>

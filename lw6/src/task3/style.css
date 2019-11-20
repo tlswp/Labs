@@ -16,7 +16,7 @@ body {
   width: 30vw;
 }
 
-.form-item__text {
+.form-item__input {
   background-color: rgb(235, 232, 232);
   width: 80%;
   height: 2vw;
@@ -26,7 +26,7 @@ body {
   font-size: 1.5vw;
 }
 
-.form-select {
+.form-item_select {
   background-color: rgb(235, 232, 232);
   width: 83%;
   height: 2vw;
@@ -36,11 +36,11 @@ body {
   font-size: 1.5vw;
 }
 
-.form-item__text:focus {
+.form-item__input:focus {
   background-color: rgb(221, 221, 221);
 }
 
-.form-submit {
+.form_submit {
   width: 83%;
   margin: 1vw;
   height: 15%;
