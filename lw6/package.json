@@ -12,13 +12,13 @@
       "quiet": true,
       "legacyWatch": true
     },
-    "validate-css": "src/task2/style.css src/task3/style.css",
+    "validate-css": "src/task1/css/style.css src/task2/style.css src/task3/style.css",
     "jshint": "src/"
   },
   "scripts": {
     "server": "live-server src",
     "validate-html": "html-validate src",
-    "validate-css": "css-validator src/task2/style.css src/task3/style.css",
+    "validate-css": "css-validator src/task1/css/style.css src/task2/style.css src/task3/style.css",
     "jshint": "jshint src/",
     "watch": "npm-watch",
     "dev-mode": "npm-run-all --parallel server watch",
