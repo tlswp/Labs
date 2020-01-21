@@ -6,7 +6,7 @@ describe('Проверка cashbox:', function() {
       cashbox.open();
       assert.equal(cashbox.status, 'open');
     });
-    it('Open меняет amount, при правельных параметрах', function() {
+    it('Open меняет amount, при правильных параметрах', function() {
       cashbox.amount = 0;
       cashbox.open(10);
       assert.equal(cashbox.amount, 10);
@@ -14,7 +14,7 @@ describe('Проверка cashbox:', function() {
       cashbox.open(1);
       assert.equal(cashbox.amount, 27);
     });
-    it('Open не меняет amount, при правельных параметрах', function() {
+    it('Open не меняет amount, при правильных параметрах', function() {
       cashbox.amount = 0;
       cashbox.open();
       assert.equal(cashbox.amount, 0);
