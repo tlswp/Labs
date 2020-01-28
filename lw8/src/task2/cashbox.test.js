@@ -14,7 +14,7 @@ describe('Проверка cashbox:', function() {
       cashbox.open(1);
       assert.equal(cashbox.amount, 27);
     });
-    it('Open не меняет amount, при правильных параметрах', function() {
+    it('Open не меняет amount, при не правильных параметрах', function() {
       cashbox.amount = 0;
       cashbox.open();
       assert.equal(cashbox.amount, 0);
@@ -26,23 +26,25 @@ describe('Проверка cashbox:', function() {
       assert.equal(cashbox.amount, 0);
     });
     it('Open заносится в историю', function() {
-      cashbox.history = [];
+      cashbox.successOperationsHistory = [];
+      cashbox.failOperationsHistory = [];
       cashbox.amount = 0;
       cashbox.open(10);
-      assert.deepEqual(cashbox.history[0], { operation: 'open', payment: 10, status: true });
-      cashbox.history = [];
+      assert.deepEqual(cashbox.successOperationsHistory[0], { operation: 'open', payment: 10, operationStatus: true });
+      cashbox.successOperationsHistory = [];
+      cashbox.failOperationsHistory = [];
       cashbox.amount = 0;
       cashbox.open([]);
-      assert.deepEqual(cashbox.history[0], { operation: 'open', payment: 0, status: false });
+      assert.deepEqual(cashbox.failOperationsHistory[0], { operation: 'open', payment: [], operationStatus: false });
     });
   });
   describe('Проверка Cashbox.addPayment:', function() {
     it('addPayment не работает, при закрытой кассе', function() {
       cashbox.status = 'close';
-      cashbox.history[0];
+      cashbox.failOperationsHistory[0];
       cashbox.amount = 0;
       cashbox.addPayment(10, '1');
-      assert.equal(cashbox.history[0].status, false);
+      assert.equal(cashbox.failOperationsHistory[0].operationStatus, false);
       assert.equal(cashbox.amount, 0);
     });
     it('addPayment работает, при открытой кассе', function() {
@@ -50,7 +52,7 @@ describe('Проверка cashbox:', function() {
       cashbox.amount = 0;
       cashbox.open();
       cashbox.addPayment(10, '1');
-      assert.equal(cashbox.history[0].status, true);
+      assert.equal(cashbox.successOperationsHistory[0].operationStatus, true);
       assert.equal(cashbox.amount, 10);
     });
     it('addPayment добавляет деньги, при верных параметрах', function() {
@@ -86,53 +88,64 @@ describe('Проверка cashbox:', function() {
     it('addPayment заносится в историю', function() {
       cashbox.amount = 0;
       cashbox.open();
-      cashbox.history = [];
+      cashbox.successOperationsHistory = [];
+      cashbox.failOperationsHistory = [];
       cashbox.addPayment(10, '1');
-      assert.deepEqual(cashbox.history[0], { operation: 'addPayment', info: '1', payment: 10, status: true });
+      assert.deepEqual(cashbox.successOperationsHistory[0], { operation: 'addPayment', info: '1', payment: 10, operationStatus: true });
       cashbox.amount = 0;
       cashbox.open();
-      cashbox.history = [];
+      cashbox.successOperationsHistory = [];
+      cashbox.failOperationsHistory = [];
       cashbox.addPayment(10, [{}]);
-      assert.deepEqual(cashbox.history[0], { operation: 'addPayment', info: 'Операция не прошла', payment: 0, status: false });
+      assert.deepEqual(cashbox.failOperationsHistory[0], { operation: 'addPayment', info: [{}], payment: 10, operationStatus: false });
     });
   });
   describe('Проверка Cashbox.refundPayment:', function() {
     it('refundPayment не работает, при закрытой кассе', function() {
       cashbox.status = 'close';
-      cashbox.history[0];
+      cashbox.failOperationsHistory[0];
       cashbox.amount = 10;
       cashbox.refundPayment(10, '1');
-      assert.equal(cashbox.history[0].status, false);
+      assert.equal(cashbox.failOperationsHistory[0].operationStatus, false);
       assert.equal(cashbox.amount, 10);
     });
     it('refundPayment работает, при открытой кассе', function() {
-      cashbox.history = [];
+      cashbox.successOperationsHistory = [];
+      cashbox.failOperationsHistory = [];
       cashbox.amount = 10;
-      cashbox.open();
+      cashbox.open(0);
       cashbox.refundPayment(10, '1');
-      assert.equal(cashbox.history[0].status, true);
+      assert.equal(cashbox.successOperationsHistory[0].operationStatus, true);
       assert.equal(cashbox.amount, 0);
     });
     it('refundPayment убавляет деньги, при верных параметрах', function() {
-      cashbox.open();
+      cashbox.open(0);
       cashbox.amount = 10;
       cashbox.refundPayment(10, '1');
       assert.equal(cashbox.amount, 0);
-      cashbox.open();
+      cashbox.open(0);
       cashbox.amount = 10;
       cashbox.refundPayment(0, '1');
       assert.equal(cashbox.amount, 10);
     });
+    it('refundPayment не выполняется, если в кассе недостаточно денег', function() {
+      cashbox.open(0);
+      cashbox.amount = 0;
+      cashbox.successOperationsHistory = [];
+      cashbox.failOperationsHistory = [];
+      cashbox.refundPayment(10, '1');
+      assert.deepEqual(cashbox.failOperationsHistory[0], { operation: 'refundPayment', info: '1', payment: 10, operationStatus: false });
+    });
     it('refundPayment не убавляет деньги, при не верных параметрах', function() {
-      cashbox.open();
+      cashbox.open(0);
       cashbox.amount = 0;
       cashbox.refundPayment([10], '1');
       assert.equal(cashbox.amount, 0);
-      cashbox.open();
+      cashbox.open(0);
       cashbox.amount = 0;
       cashbox.refundPayment({}, '1');
       assert.equal(cashbox.amount, 0);
-      cashbox.open();
+      cashbox.open(0);
       cashbox.amount = 0;
       cashbox.refundPayment('{}', '1');
       assert.equal(cashbox.amount, 0);
@@ -146,14 +159,16 @@ describe('Проверка cashbox:', function() {
     it('refundPayment заносится в историю', function() {
       cashbox.amount = 10;
       cashbox.open();
-      cashbox.history = [];
+      cashbox.successOperationsHistory = [];
+      cashbox.failOperationsHistory = [];
       cashbox.refundPayment(10, '1');
-      assert.deepEqual(cashbox.history[0], { operation: 'refundPayment', info: '1', payment: 10, status: true });
+      assert.deepEqual(cashbox.successOperationsHistory[0], { operation: 'refundPayment', info: '1', payment: 10, operationStatus: true });
       cashbox.amount = 10;
       cashbox.open();
-      cashbox.history = [];
+      cashbox.successOperationsHistory = [];
+      cashbox.failOperationsHistory = [];
       cashbox.refundPayment(10, [{}]);
-      assert.deepEqual(cashbox.history[0], { operation: 'refundPayment', info: 'Операция не прошла', payment: 0, status: false });
+      assert.deepEqual(cashbox.failOperationsHistory[0], { operation: 'refundPayment', info: [{}], payment: 10, operationStatus: false });
     });
   });
 });

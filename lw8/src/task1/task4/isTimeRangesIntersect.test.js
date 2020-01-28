@@ -19,6 +19,7 @@ describe('Проверка isTimeRangesIntersect:', function() {
     assert.equal(isTimeRangesIntersect(['10:30', '12:00'], {}), false);
     assert.equal(isTimeRangesIntersect(['10:30', '12:00'], []), false);
     assert.equal(isTimeRangesIntersect(['10:30', '12:00'], 'null'), false);
+    assert.equal(isTimeRangesIntersect(['11:30', '09:30'], ['10:30', '12:00']), false);
   });
   it('Возвращает true, когда диапазоны пересекаются', function() {
     assert.equal(isTimeRangesIntersect(['08:30', '19:30'], ['10:30', '12:00']), true);
@@ -27,6 +28,10 @@ describe('Проверка isTimeRangesIntersect:', function() {
   it('Возвращает false, когда диапазоны не пересекаются', function() {
     assert.equal(isTimeRangesIntersect(['08:30', '09:30'], ['10:30', '12:00']), false);
     assert.equal(isTimeRangesIntersect(['00:30', '09:30'], ['10:30', '12:00']), false);
+  });
+  it('Возвращает true, когда диапазоны равны', function() {
+    assert.equal(isTimeRangesIntersect(['08:30', '19:30'], ['08:30', '19:30']), true);
+    assert.equal(isTimeRangesIntersect(['00:30', '11:30'], ['00:30', '11:30']), true);
   });
   it('Возвращает false при отсутствии параметров', function() {
     assert.equal(isTimeRangesIntersect(), false);
