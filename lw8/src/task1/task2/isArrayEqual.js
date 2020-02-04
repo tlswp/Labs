@@ -14,4 +14,3 @@ function isArrayEqual(array1 = [], array2 = []) {
   return false;
 }
 module.exports = isArrayEqual;
-isArrayEqual(['a', 2], ['a', 2]);

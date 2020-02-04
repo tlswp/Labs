@@ -17,5 +17,3 @@ function isTimeRangesIntersect(timeRange1 = [], timeRange2 = []) {
   return false;
 }
 module.exports = isTimeRangesIntersect;
-//isTimeRangesIntersect(['08:30', '09:30'], ['10:30', '12:00'])
-//isTimeRangesIntersect(['08:30', '19:30'], ['10:30', '12:00'])

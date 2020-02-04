@@ -1,79 +1,71 @@
 const Player = require('./Player.js');
 const assert = require('assert');
-
-describe('Проверка Player:', function() {
+var player = new Player();
+describe('Проверка player:', function() {
   it('Play работает', function() {
-    Player.play();
-    assert.equal(Player.status, 'play');
+    assert.equal(player.status, 'pause');
+    player.play();
+    assert.equal(player.status, 'play');
   });
   it('Pause работает', function() {
-    Player.pause();
-    assert.equal(Player.status, 'pause');
+    player.status = 'play';
+    player.pause();
+    assert.equal(player.status, 'pause');
   });
   it('Next работает', function() {
-    Player.track = ['song.mp3', 'song2.mp3', 'song3.mp3']
-    Player.selectedTrack = 0;
-    Player.next();
-    assert.equal(Player.selectedTrack, 1);
-    Player.selectedTrack = 2;
-    Player.next();
-    assert.equal(Player.selectedTrack, 0);
+    player = new Player();
+    player.next();
+    assert.equal(player.selectedTrack, 1);
+    player.next();
+    player.next();
+    assert.equal(player.selectedTrack, 0);
   });
   it('После Next, status остается прежним', function() {
-    Player.play();
-    Player.track = ['song.mp3', 'song2.mp3', 'song3.mp3']
-    Player.selectedTrack = 0;
-    Player.next();
-    assert.equal(Player.status, 'play');
-    Player.pause();
-    Player.selectedTrack = 2;
-    Player.next();
-    assert.equal(Player.status, 'pause');
+    player = new Player();
+    player.play();
+    player.next();
+    assert.equal(player.status, 'play');
+    player.pause();
+    player.next();
+    assert.equal(player.status, 'pause');
   });
   it('Prev работает', function() {
-    Player.track = ['song.mp3', 'song2.mp3', 'song3.mp3']
-    Player.selectedTrack = 0;
-    Player.prev();
-    assert.equal(Player.selectedTrack, 2);
-    Player.selectedTrack = 2;
-    Player.prev();
-    assert.equal(Player.selectedTrack, 1);
+    player = new Player();
+    player.prev();
+    assert.equal(player.selectedTrack, 2);
+    player.prev();
+    assert.equal(player.selectedTrack, 1);
   });
   it('После Prev, status остается прежним', function() {
-    Player.play();
-    Player.track = ['song.mp3', 'song2.mp3', 'song3.mp3']
-    Player.selectedTrack = 0;
-    Player.prev();
-    assert.equal(Player.status, 'play');
-    Player.pause();
-    Player.selectedTrack = 2;
-    Player.prev();
-    assert.equal(Player.status, 'pause');
+    player = new Player();
+    player.play();
+    player.prev();
+    assert.equal(player.status, 'play');
+    player.pause();
+    player.prev();
+    assert.equal(player.status, 'pause');
   });
   it('Display работает', function() {
-    Player.track = ['song.mp3', 'song2.mp3', 'song3.mp3']
-    Player.selectedTrack = 0;
-    Player.play();
-    assert.equal(Player.display(), 'Track: song.mp3 Status: play');
-    Player.track = ['song.mp3', 'song2.mp3', 'song3.mp3']
-    Player.selectedTrack = 1;
-    Player.pause();
-    assert.equal(Player.display(), 'Track: song2.mp3 Status: pause')
-    Player.track = []
-    Player.selectedTrack = 1;
-    Player.pause();
-    assert.equal(Player.display(), 'No tracks found')
+    player = new Player();
+    player.play();
+    assert.equal(player.display(), 'Track: song.mp3 Status: play');
+    player.next();
+    player.pause();
+    assert.equal(player.display(), 'Track: song2.mp3 Status: pause')
+    player.track = []
+    player.pause();
+    assert.equal(player.display(), 'No tracks found')
   });
   it('Prev не работает если массив с треками пуст', function() {
-    Player.track = []
-    assert.equal(Player.prev(), false);
+    player.track = []
+    assert.equal(player.prev(), false);
   });
   it('Next не работает если массив с треками пуст', function() {
-    Player.track = []
-    assert.equal(Player.next(), false);
+    player.track = []
+    assert.equal(player.next(), false);
   });
   it('Play не работает если массив с треками пуст', function() {
-    Player.track = []
-    assert.equal(Player.play(), false);
+    player.track = []
+    assert.equal(player.play(), false);
   });
 });
