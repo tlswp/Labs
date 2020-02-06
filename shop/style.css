@@ -1,0 +1,72 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  overflow-x: hidden;
+  font-size: 1.2vw;
+}
+
+.header {
+  width: 100%;
+  height: 10vh;
+  display: flex;
+  align-items: center;
+  padding: 0 5%;
+}
+
+.logo {
+  font-size: 1.7vw;
+}
+
+.categories {
+  display: flex;
+  align-items: center;
+  width: 70%;
+  margin: 2%;
+}
+
+.category {
+  margin: 2%;
+}
+
+.log {
+  display: flex;
+}
+
+.login {
+  font-size: 1.3vw;
+  margin: 2%;
+}
+
+.banner-wr {
+  padding: 0 5%;
+  width: 90%;
+  overflow: hidden;
+  height: 60vh;
+}
+
+.banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    overflow-x: hidden;
+    font-size: 1.2vw;
+    background-color: black;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    overflow-x: hidden;
+    font-size: 1.2vw;
+    background-color: white;
+  }
+}
