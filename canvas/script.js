@@ -19,14 +19,59 @@ Player.dw = 65;
 Player.dh = 70;
 Player.walk = new Audio();
 Player.walk.src = 'audio/au2.wav';
-
+var floor = new Image();
+floor.src = 'img/floor.jpg';
 
 function pos() {
   Player.xPos = 0;
   Player.yPos = 0;
 }
+class Floor {
+  constructor(imageSrc, dx, dy, dw, dh) {
+    this.image = new Image();
+    this.image.src = imageSrc;
+    this.dx = dx;
+    this.dy = dy;
+    this.dw = dw;
+    this.dh = dh;
+    setInterval(this.cont.bind(this), 1000 / 30);
+    // setInterval(this.drawFloor.bind(this), 1000 / 30);
+    // setInterval(this.gravitationFloor.bind(this), 1000 / 30);
+
+  }
+  drawFloor() {
+    ctx.drawImage(this.image, this.dx, this.dy, this.dw, this.dh);
+  }
+  gravitationFloor() {
+    if (this.dy >= Player.dy + Player.dh && (this.dx <= Player.dx + Player.dw && this.dx + this.dw >= Player.dx)) {
+      console.log(this.dy + ' floor');
+      Player.dy += 9;
+    }
+    if ((this.dx >= Player.dx + Player.dw && this.dx + this.dw <= Player.dx)) {
+      console.log(this.dy + ' floor');
+      Player.dy += 2;
+    }
+  }
+  cont = function() {
+    draw();
+    this.drawFloor();
+    this.gravitationFloor();
+  }
+}
+//var floor1 = new Floor('img/floor.jpg', 20, 300, 50, 50);
+var floors = [];
+
+function generateFloor() {
+  var x = 0;
+  var y = 0;
+  for (var i = 0; i < 15; i++) {
+    floors[i] = new Floor('img/floor.jpg', x, 300, 50, 50);
+    x += 50;
+  }
+}
 
 function walk(event = 0) {
+
   switch (event.code) {
     case 'KeyD':
       Player.KeyD = 1;
@@ -52,10 +97,6 @@ function walk(event = 0) {
       break;
   }
   //alert(walkR.left + walkR.right)
-  console.log(Player.x)
-  Player.x = walkR.left + walkR.right;
-  Player.y = walkR.top;
-  return walkR;
 }
 
 function standing() {
@@ -83,31 +124,32 @@ function standing() {
   Player.y = 0;
 }
 
-function gravitation(gravitationStatus = 1) {
-  if (gravitationStatus = 1) {
-    if (Player.dy <= 400) {
-      //Player.yPos += 6;
-      return 6;
-    }
-    if (Player.dy >= 400) {
-      //Player.yPos += 0;
-      return 0;
-    }
-  }
-}
+// function gravitation(gravitationStatus = 1) {
+//   if (gravitationStatus = 1) {
+//     if (Player.dy <= 400) {
+//       //Player.yPos += 6;
+//       return 6;
+//     }
+//     if (Player.dy >= 400) {
+//       //Player.yPos += 0;
+//       return 0;
+//     }
+//   }
+// }
 
 function draw() {
+  console.log(Player.dy + ' player');
   if (Player.KeyD == 1) {
     Player.sy = 710;
     i = i % 8 + 1;
     Player.sx = 64 * i;
-    Player.dx += 1;
+    Player.dx += 2;
   }
   if (Player.KeyA == 1) {
     Player.sy = 582;
     i = i % 8 + 1;
     Player.sx = 64 * i;
-    Player.dx -= 1;
+    Player.dx -= 2;
     //walkR.right = 1;
   }
   if (Player.KeyS == 1) {
@@ -124,23 +166,19 @@ function draw() {
     Player.sx = 64 * i;
   }
   if (Player.KeyW == 1) {
-    var startPosition = Player.dy;
-    if (startPosition <= 420 && startPosition >= 350) {
-      if (startPosition - Player.dy <= 50) {
-        Player.dy -= 15;
-      }
-    }
+    Player.dy -= 15;
   }
   //Player.x = 0;
   //Player.y = 0;
   document.addEventListener('keydown', walk);
-  Player.dx += Player.x;
-  Player.dy += Player.y + gravitation();
+  //Player.dx += Player.x;
+  // Player.dy += Player.y;
+  document.addEventListener('keyup', standing);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  document.addEventListener('keyup', standing)
   ctx.drawImage(player, Player.sx, Player.sy, Player.sw, Player.sh, Player.dx, Player.dy, Player.dw, Player.dh);
   //requestAnimationFrame(draw);
   //gravitation()
 }
-setInterval(draw, 1000 / 30);
+generateFloor();
+//setInterval(draw, 1000 / 30);
 //player.onload = draw;
