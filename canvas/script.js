@@ -9,69 +9,92 @@ Player.yPos = 0;
 Player.x = Player.xPos;
 Player.y = Player.yPos;
 var link = 0;
-Player.sw = 65;
-Player.sh = 70;
+Player.speed = 2;
+Player.sw = 50;
+Player.sh = 64;
 Player.sy = 710;
 Player.sx = 0;
 Player.dx = 0;
 Player.dy = 0;
-Player.dw = 65;
-Player.dh = 70;
+Player.dw = 50;
+Player.dh = 64;
 Player.walk = new Audio();
 Player.walk.src = 'audio/au2.wav';
 var floor = new Image();
 floor.src = 'img/floor.jpg';
+
+Player.grav = 9
+Player.grav = 0;
 
 function pos() {
   Player.xPos = 0;
   Player.yPos = 0;
 }
 class Floor {
-  constructor(imageSrc, dx, dy, dw, dh) {
+  constructor(imageSrc, dx, dy, dw, dh, floorN) {
     this.image = new Image();
     this.image.src = imageSrc;
     this.dx = dx;
     this.dy = dy;
     this.dw = dw;
     this.dh = dh;
-    setInterval(this.cont.bind(this), 1000 / 30);
-    // setInterval(this.drawFloor.bind(this), 1000 / 30);
-    // setInterval(this.gravitationFloor.bind(this), 1000 / 30);
+    this.floorN = floorN;
+    setInterval(this.gravitationFloor.bind(this), 1000 / 30);
 
   }
   drawFloor() {
     ctx.drawImage(this.image, this.dx, this.dy, this.dw, this.dh);
   }
   gravitationFloor() {
-    if (this.dy >= Player.dy + Player.dh && (this.dx <= Player.dx + Player.dw && this.dx + this.dw >= Player.dx)) {
-      console.log(this.dy + ' floor');
-      Player.dy += 9;
+    var c = 0;
+    var b = 0;
+    if (this.dy >= Player.dy + Player.dh && //(this.dx <= Player.dx + Player.dw && Player.dx <= this.dx + this.dw) &&
+      ((this.dx <= Player.dx && Player.dx <= this.dx + this.dw))) {
+      b = 3;
     }
-    if ((this.dx >= Player.dx + Player.dw && this.dx + this.dw <= Player.dx)) {
-      console.log(this.dy + ' floor');
-      Player.dy += 2;
+    // if ((this.dx <= Player.dx && Player.dx <= this.dx + this.dw && this.dy === Player.dy + Player.dh)) {
+    //   b = 9;
+    //   Player.dy = this.dy - Player.dh;
+    //   console.log(' ' + this.floorN + ' ')
+    // }
+    if (Player.dy + Player.dh > this.dy && Player.dy + Player.dh >= this.dy + this.dh && Player.dx + Player.dw === this.dx) {
+      c = 2;
+      console.log(this.dy - (Player.dy + Player.dh))
     }
-  }
-  cont = function() {
-    draw();
-    this.drawFloor();
-    this.gravitationFloor();
+    Player.dy += b;
+    Player.dx -= c;
   }
 }
-//var floor1 = new Floor('img/floor.jpg', 20, 300, 50, 50);
 var floors = [];
 
 function generateFloor() {
   var x = 0;
   var y = 0;
   for (var i = 0; i < 15; i++) {
-    floors[i] = new Floor('img/floor.jpg', x, 300, 50, 50);
-    x += 50;
+    if (i !== 2) {
+      floors[i] = new Floor('img/floor.jpg', x, 300, 50, 50, i);
+      x += 50;
+    }
+    if (i === 2) {
+      floors[2] = new Floor('img/floor.jpg', 100, 250, 50, 50, 2);
+      x += 50;
+    }
+    floors[i].drawFloor();
   }
 }
+generateFloor();
+//var floor1 = new Floor('img/floor.jpg', 20, 300, 50, 50);
+function drawFloors() {
+  for (var i = 0; i < 15; i++) {
+    floors[i].drawFloor();
+    if (floors[i].grav === false) {
+
+    }
+  }
+}
+Player.stopper = 0;
 
 function walk(event = 0) {
-
   switch (event.code) {
     case 'KeyD':
       Player.KeyD = 1;
@@ -86,18 +109,11 @@ function walk(event = 0) {
       break;
     case 'KeyW':
       Player.KeyW = 1;
-      if (Player.yPos <= 450) {
-        //Player.yPos += 6;
-        walkR.top = -9;
-      }
-      if (Player.yPos >= 450) {
-        //Player.yPos += 0;
-        walkR.top = 0;
-      }
       break;
   }
   //alert(walkR.left + walkR.right)
 }
+Player.stopper1 = 0;
 
 function standing() {
   i = 0;
@@ -111,7 +127,7 @@ function standing() {
   }
   if (event.code == 'KeyS') {
     Player.KeyS = 0;
-    i = 5;
+    i = 3;
     if (i > 0) {
       i -= 1;
     }
@@ -119,42 +135,33 @@ function standing() {
   }
   if (event.code == 'KeyW') {
     Player.KeyW = 0;
+    //alert(250 - Player.dy + Player.dh);
+    if (300 - (Player.dy + Player.dh) < 11) {
+      Player.stopper = 0;
+      Player.stopper1 = 0;
+    }
   }
   Player.x = 0;
   Player.y = 0;
 }
-
-// function gravitation(gravitationStatus = 1) {
-//   if (gravitationStatus = 1) {
-//     if (Player.dy <= 400) {
-//       //Player.yPos += 6;
-//       return 6;
-//     }
-//     if (Player.dy >= 400) {
-//       //Player.yPos += 0;
-//       return 0;
-//     }
-//   }
-// }
-
-function draw() {
-  console.log(Player.dy + ' player');
+speed = [11, 10, 9, 8, 7, 6, 5];
+this.draw = setTimeout(function tick() {
   if (Player.KeyD == 1) {
     Player.sy = 710;
     i = i % 8 + 1;
     Player.sx = 64 * i;
-    Player.dx += 2;
+    Player.dx += Player.speed;
   }
   if (Player.KeyA == 1) {
     Player.sy = 582;
     i = i % 8 + 1;
     Player.sx = 64 * i;
-    Player.dx -= 2;
+    Player.dx -= Player.speed;
     //walkR.right = 1;
   }
   if (Player.KeyS == 1) {
     Player.sy = 1285;
-    if (i < 5) {
+    if (i < 3) {
       i += 1;
     }
     Player.sx = 64 * i;
@@ -165,8 +172,12 @@ function draw() {
     }
     Player.sx = 64 * i;
   }
-  if (Player.KeyW == 1) {
-    Player.dy -= 15;
+  if (Player.KeyW == 1 && Player.stopper === 0) {
+    Player.stopper1 += 1;
+    Player.dy -= speed[Player.stopper1];
+  }
+  if (Player.stopper1 > 5) {
+    Player.stopper = 1;
   }
   //Player.x = 0;
   //Player.y = 0;
@@ -175,10 +186,9 @@ function draw() {
   // Player.dy += Player.y;
   document.addEventListener('keyup', standing);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawFloors();
+  Player.dy += Player.grav
   ctx.drawImage(player, Player.sx, Player.sy, Player.sw, Player.sh, Player.dx, Player.dy, Player.dw, Player.dh);
-  //requestAnimationFrame(draw);
-  //gravitation()
-}
-generateFloor();
-//setInterval(draw, 1000 / 30);
+  this.draw = setTimeout(tick, 1000 / 30);
+}, 1000 / 30);
 //player.onload = draw;
