@@ -48,16 +48,32 @@ class Floor {
   gravitationFloor() {
     var c = 0;
     var b = 0;
-    if (this.dy >= Player.dy + Player.dh && //(this.dx <= Player.dx + Player.dw && Player.dx <= this.dx + this.dw) &&
-      ((this.dx <= Player.dx && Player.dx <= this.dx + this.dw))) {
-      b = 3;
+    this.floorSt = false;
+    if (b === 0) {
+      if ( //this.dy >= Player.dy + Player.dh && //(this.dx <= Player.dx + Player.dw && Player.dx <= this.dx + this.dw) &&
+        ((this.dx <= Player.dx && Player.dx <= this.dx + this.dw) || (Player.dx + Player.dw >= this.dx - 10 && Player.dx + Player.dw <= this.dx + this.dw + 10))) {
+        b = 3;
+        if (this.dx - 10 <= Player.dx && Player.dx <= this.dx + this.dw + 10 && Player.dx + Player.dw >= this.dx - 10 && Player.dx + Player.dw <= this.dx + this.dw + 10) {
+          this.floorSt = true;
+          //b = -3;
+        }
+        // if (this.floorSt) {
+        //   b = 0;
+        // }
+        if (this) {
+
+        }
+        if (this.dy - (Player.dy + Player.dh) <= 2 && this.dy - (Player.dy + Player.dh) <= 0) {
+          b = 0;
+        }
+      }
     }
     // if ((this.dx <= Player.dx && Player.dx <= this.dx + this.dw && this.dy === Player.dy + Player.dh)) {
     //   b = 9;
     //   Player.dy = this.dy - Player.dh;
     //   console.log(' ' + this.floorN + ' ')
     // }
-    if (Player.dy + Player.dh > this.dy && Player.dy + Player.dh >= this.dy + this.dh && Player.dx + Player.dw === this.dx) {
+    if (Player.dy + Player.dh >= this.dy && Player.dx + Player.dw === this.dx) {
       c = 2;
       console.log(this.dy - (Player.dy + Player.dh))
     }
@@ -144,7 +160,7 @@ function standing() {
   Player.x = 0;
   Player.y = 0;
 }
-speed = [11, 10, 9, 8, 7, 6, 5];
+speed = [15, 50, 11, 8, 7, 6, 5, 4, 3, 2];
 this.draw = setTimeout(function tick() {
   if (Player.KeyD == 1) {
     Player.sy = 710;
@@ -176,7 +192,7 @@ this.draw = setTimeout(function tick() {
     Player.stopper1 += 1;
     Player.dy -= speed[Player.stopper1];
   }
-  if (Player.stopper1 > 5) {
+  if (Player.stopper1 > 8) {
     Player.stopper = 1;
   }
   //Player.x = 0;
