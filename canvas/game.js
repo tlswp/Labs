@@ -163,7 +163,7 @@ function moveAnimation() {
     Player.sx = 64 * Player.frame;
   }
 }
-Player = new Players('img/nigg.png', 0, 710, 64, 64, 50, 50, 64, 64);
+Player = new Players('img/rickardo.png', 0, 710, 64, 64, 50, 50, 64, 64);
 var jumpSpeed = [];
 
 function SceletonAnimation() {
