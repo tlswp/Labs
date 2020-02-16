@@ -21,6 +21,7 @@ class Players {
     this.ShiftLeft = false;
   }
 }
+Sceleton = new Players('img/sceleton.png', 0, 710, 64, 64, 550, 244, 64, 64);
 var jumpPressed = false;
 var jumpCount = 0;
 var jumpLength = 55;
@@ -38,9 +39,38 @@ class Floor {
     ctx.drawImage(this.image, this.dx, this.dy, this.dw, this.dh);
   }
 }
-var floors = [];
+class Coin {
+  constructor(imageSrc, sx, sy, sw, sh, dx, dy, dw, dh) {
+    this.image = new Image();
+    this.image.src = imageSrc;
+    this.sx = sx;
+    this.sy = sy;
+    this.sw = sw;
+    this.sh = sh;
+    this.dx = dx;
+    this.dy = dy;
+    this.dw = dw;
+    this.dh = dh;
+    this.frame = 0;
+    this.coin = true;
+  };
+  drawCoin() {
+    ctx.drawImage(this.image, this.sx, this.sy, this.sw, this.sh, this.dx, this.dy, this.dw, this.dh);
+  }
+}
+var floors = [],
+  coins = [];
 
-function generateFloor(count) {
+function generateCoins(count) {
+  var x = 0;
+  for (var coin = 0; coin < count; coin++) {
+    coins[coin] = new Coin('img/coin.png', 0, 0, 16, 16, x + 25, 300 - 16, 16, 16);
+    x += 50;
+  }
+}
+generateCoins(2);
+
+function generateFloors(count) {
   var x = 0;
   var y = 0;
   for (var floorsElement = 0; floorsElement < count; floorsElement++) {
@@ -59,8 +89,9 @@ function generateFloor(count) {
   floors[5] = new Floor('img/floor.jpg', 400, 200, 50, 50);
   floors[6] = new Floor('img/floor.jpg', 400, 250, 50, 50);
   floors[7] = new Floor('img/floor.jpg', 450, 150, 50, 50);
+  floors[13] = new Floor('img/floor.jpg', 600, 250, 50, 50);
 }
-generateFloor(20);
+generateFloors(20);
 
 function keysPressed(event) {
   //alert(event.code);
@@ -135,6 +166,46 @@ function moveAnimation() {
 Player = new Players('img/nigg.png', 0, 710, 64, 64, 50, 50, 64, 64);
 var jumpSpeed = [];
 
+function SceletonAnimation() {
+  if (Sceleton.route) {
+    Sceleton.sy = 710;
+    Sceleton.frame = Sceleton.frame % 8 + 1;
+    Sceleton.sx = 64 * Sceleton.frame;
+  }
+  if (!Sceleton.route) {
+    Sceleton.sy = 582;
+    Sceleton.frame = Sceleton.frame % 8 + 1;
+    Sceleton.sx = 64 * Sceleton.frame;
+  }
+}
+
+function SceletonMove() {
+  if (Sceleton.route) { Sceleton.dx += 1; }
+  if (!Sceleton.route) { Sceleton.dx -= 1; }
+}
+
+function SceletonPhysics() {
+  var height = 64 - 8,
+    y = 8,
+    width = 64 - 22,
+    x = 22;
+  for (var floorsElement = 0; floorsElement < floors.length; floorsElement++) {
+    if (Sceleton.dy + height > floors[floorsElement].dy && Sceleton.dy + y < floors[floorsElement].dy + floors[floorsElement].dh &&
+      Sceleton.dx + width === floors[floorsElement].dx) {
+      Sceleton.route = false;
+    }
+    if (Sceleton.dy + height > floors[floorsElement].dy && Sceleton.dy + y < floors[floorsElement].dy + floors[floorsElement].dh &&
+      Sceleton.dx + x === floors[floorsElement].dx + floors[floorsElement].dw) {
+      Sceleton.route = true;
+    }
+  }
+  if (Sceleton.dy + height > Player.dy - y && Sceleton.dy + y < Player.dy + height &&
+    Sceleton.dx + width > Player.dx + x && Sceleton.dx + x < Player.dx + width) {
+    Player.dx = 0;
+    Player.dy = 0;
+  }
+}
+
 function generateJumpSpeed() {
   jumpSpeed = [];
   jumpSpeedReverse = [];
@@ -207,24 +278,55 @@ function physics() {
     }
     if (Player.dy + height > floors[floorsElement].dy && Player.dy + y < floors[floorsElement].dy + floors[floorsElement].dh &&
       Player.dx + width === floors[floorsElement].dx) {
-      Player.dx -= 2;
+      Player.dx -= 1;
     }
     if (Player.dy + height > floors[floorsElement].dy && Player.dy + y < floors[floorsElement].dy + floors[floorsElement].dh &&
       Player.dx + x === floors[floorsElement].dx + floors[floorsElement].dw) {
-      Player.dx += 2;
+      Player.dx += 1;
     }
   }
   Player.dy += Player.gravitationCount;
 }
 
+function coinAnimation() {
+  for (var coin = 0; coin < coins.length; coin++) {
+    coins[coin].frame = coins[coin].frame % 8 + 1;
+    coins[coin].sx = 16 * coins[coin].frame;
+  }
+}
+
+function coinPhysics() {
+  var height = 64 - 8,
+    y = 8,
+    width = 64 - 22,
+    x = 22;
+  for (var coin = 0; coin < coins.length; coin++) {
+    if (coins[coin].dy > Player.dy - y && coins[coin].dy < Player.dy + height &&
+      coins[coin].dx > Player.dx + x && coins[coin].dx < Player.dx + width && coins[coin].coin) {
+      coins[coin].coin = false;
+    }
+  }
+}
+
 function draw() {
+  SceletonMove();
   moveAnimation();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (var floorsElement = 0; floorsElement < floors.length; floorsElement++) {
     floors[floorsElement].drawFloor();
   }
+  for (var coin = 0; coin < coins.length; coin++) {
+    if (coins[coin].coin) {
+      coins[coin].drawCoin();
+    }
+  }
   ctx.drawImage(Player.playerImage, Player.sx, Player.sy, Player.sw, Player.sh, Player.dx, Player.dy, Player.dw, Player.dh);
+  ctx.drawImage(Sceleton.playerImage, Sceleton.sx, Sceleton.sy, Sceleton.sw, Sceleton.sh, Sceleton.dx, Sceleton.dy, Sceleton.dw, Sceleton.dh);
 }
+setInterval(SceletonPhysics, 1);
+setInterval(SceletonAnimation, 1000 / 15);
+setInterval(coinAnimation, 1000 / 15);
+setInterval(coinPhysics, 1);
 setInterval(physics, 1);
 setInterval(draw, 1000 / 30);
 window.onload = function() {}
