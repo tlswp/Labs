@@ -62,9 +62,9 @@ var floors = [],
   coins = [];
 
 function generateCoins(count) {
-  var x = 0;
+  var x = 100;
   for (var coin = 0; coin < count; coin++) {
-    coins[coin] = new Coin('img/coin.png', 0, 0, 16, 16, x + 25, 300 - 16, 16, 16);
+    coins[coin] = new Coin('img/coin.png', 0, 0, 16, 16, x + 25, 100 - 16, 16, 16);
     x += 50;
   }
 }
