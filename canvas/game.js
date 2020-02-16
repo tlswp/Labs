@@ -12,14 +12,19 @@ class Players {
     this.dy = dy;
     this.dw = dw;
     this.dh = dh;
-    this.speed = 2;
+    this.speed = 10;
     this.frame = 0;
     this.keyW = false;
     this.keyA = false;
     this.keyS = false;
     this.keyD = false;
+    this.ShiftLeft = false;
   }
 }
+var jumpPressed = false;
+var jumpCount = 0;
+var jumpLength = 55;
+var jumpHeight = 0;
 class Floor {
   constructor(imageSrc, dx, dy, dw, dh) {
     this.image = new Image();
@@ -42,12 +47,23 @@ function generateFloor(count) {
     floors[floorsElement] = new Floor('img/floor.jpg', x, 300, 50, 50);
     x += 50;
   }
-  floors[2] = new Floor('img/floor.jpg', 100, 250, 50, 50);
-  floors[14] = new Floor('img/floor.jpg', 100, 125, 50, 50);
+  floors[19] = new Floor('img/floor.jpg', 100, 250, 50, 50);
+  floors[20] = new Floor('img/floor.jpg', 100, 125, 50, 50);
+  floors[18] = new Floor('img/floor.jpg', 200, 250, 50, 50);
+  floors[17] = new Floor('img/floor.jpg', 200, 125, 50, 50);
+  floors[18] = new Floor('img/floor.jpg', 200, 250, 50, 50);
+  floors[17] = new Floor('img/floor.jpg', 300, 200, 50, 50);
+  floors[16] = new Floor('img/floor.jpg', 150, 125, 50, 50);
+  floors[15] = new Floor('img/floor.jpg', 200, 125, 50, 50);
+  floors[14] = new Floor('img/floor.jpg', 400, 150, 50, 50);
+  floors[5] = new Floor('img/floor.jpg', 400, 200, 50, 50);
+  floors[6] = new Floor('img/floor.jpg', 400, 250, 50, 50);
+  floors[7] = new Floor('img/floor.jpg', 450, 150, 50, 50);
 }
-generateFloor(15);
+generateFloor(20);
 
 function keysPressed(event) {
+  //alert(event.code);
   switch (event.code) {
     case 'KeyD':
       Player.KeyD = true;
@@ -60,6 +76,9 @@ function keysPressed(event) {
       break;
     case 'KeyW':
       Player.KeyW = true;
+      break;
+    case 'ShiftLeft':
+      Player.ShiftLeft = true;
       break;
   }
 }
@@ -86,25 +105,24 @@ function keysUp(event) {
     case 'KeyW':
       Player.KeyW = false;
       break;
+    case 'ShiftLeft':
+      Player.ShiftLeft = false;
+      break;
   }
 }
-var speed = 0;
 
-function move() {
-  if (Player.KeyW === true) {
-    Player.dy -= 9;
-  }
+function moveAnimation() {
+  if (Player.KeyW === true) {}
+  if (Player.KeyW !== false) {}
   if (Player.KeyD === true && Player.KeyS !== true) {
     Player.sy = 710;
     Player.frame = Player.frame % 8 + 1;
     Player.sx = 64 * Player.frame;
-    Player.dx += Player.speed;
   }
   if (Player.KeyA === true && Player.KeyS !== true) {
     Player.sy = 582;
     Player.frame = Player.frame % 8 + 1;
     Player.sx = 64 * Player.frame;
-    Player.dx -= Player.speed;
   }
   if (Player.KeyS === true && Player.KeyA !== true && Player.KeyD !== true) {
     Player.sy = 1285;
@@ -115,12 +133,59 @@ function move() {
   }
 }
 Player = new Players('img/nigg.png', 0, 710, 64, 64, 50, 50, 64, 64);
-var tickCount = 0;
+var jumpSpeed = [];
+
+function generateJumpSpeed() {
+  jumpSpeed = [];
+  jumpSpeedReverse = [];
+  for (var jumpCount = 1; jumpCount < jumpLength / 2; jumpCount++) {
+    if (jumpCount % 2 === 1) {
+      jumpSpeed.push(jumpCount / 10);
+      jumpSpeedReverse.push(jumpCount / 10);
+    }
+  }
+  jumpSpeed = jumpSpeed.concat(jumpSpeedReverse.reverse())
+}
+generateJumpSpeed()
+var jump = setTimeout(function tick() {
+  if (jumpPressed) {
+    Player.dy -= 1;
+    jumpCount++;
+  }
+  if (Player.KeyW === true) {
+    jumpPressed = true;
+  }
+  if (jumpCount > jumpLength) {
+    jumpPressed = false;
+    jumpHeight = 0;
+  }
+  jump = setTimeout(tick, jumpSpeed[jumpCount]);
+}, jumpSpeed[jumpCount])
+
+var move = setTimeout(function tick() {
+  if (Player.KeyD === true && Player.KeyS !== true) {
+    Player.dx += 1;
+  }
+  if (Player.KeyA === true && Player.KeyS !== true) {
+    Player.dx -= 1;
+  }
+  if (Player.ShiftLeft === true) {
+    Player.speed = 5;
+  }
+  if (Player.ShiftLeft === false) {
+    Player.speed = 10;
+  }
+  move = setTimeout(tick, Player.speed)
+}, Player.speed)
 
 function physics() {
-  tickCount = 10;
-  var gravitationCount = 1,
-    height = 64 - 8,
+  if (jumpPressed) {
+    Player.gravitationCount = 0;
+  }
+  if (!jumpPressed) {
+    Player.gravitationCount = 1
+  }
+  var height = 64 - 8,
     y = 8,
     width = 64 - 22,
     x = 22;
@@ -131,14 +196,14 @@ function physics() {
       ((floors[floorsElement].dx <= Player.dx + width && Player.dx + width < floors[floorsElement].dx + floors[floorsElement].dw) ||
         (floors[floorsElement].dx + floors[floorsElement].dw >= Player.dx + x && floors[floorsElement].dx <= Player.dx + width))) {
       Player.dy += 1;
-      tickCount = 1000 / 30;
-      console.log(floors[floorsElement].dx + '>' + (Player.dx + width))
     }
     if (floors[floorsElement].dy - (Player.dy + height) === 0 &&
       ((floors[floorsElement].dx <= Player.dx + width && Player.dx + width < floors[floorsElement].dx + floors[floorsElement].dw) ||
         (floors[floorsElement].dx + floors[floorsElement].dw >= Player.dx + x && floors[floorsElement].dx <= Player.dx + width))) {
-      gravitationCount = 0;
-      console.log(floors[floorsElement].dx + '>' + (Player.dx + width))
+      Player.gravitationCount = 0;
+      if (!jumpPressed) {
+        jumpCount = 0;
+      }
     }
     if (Player.dy + height > floors[floorsElement].dy && Player.dy + y < floors[floorsElement].dy + floors[floorsElement].dh &&
       Player.dx + width === floors[floorsElement].dx) {
@@ -149,19 +214,17 @@ function physics() {
       Player.dx += 2;
     }
   }
-  Player.dy += gravitationCount;
+  Player.dy += Player.gravitationCount;
 }
 
 function draw() {
-  move();
+  moveAnimation();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (var floorsElement = 0; floorsElement < floors.length; floorsElement++) {
     floors[floorsElement].drawFloor();
   }
   ctx.drawImage(Player.playerImage, Player.sx, Player.sy, Player.sw, Player.sh, Player.dx, Player.dy, Player.dw, Player.dh);
 }
-setInterval(physics, tickCount);
+setInterval(physics, 1);
 setInterval(draw, 1000 / 30);
-window.onload = function() {
-
-}
+window.onload = function() {}
