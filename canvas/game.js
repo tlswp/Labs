@@ -68,7 +68,24 @@ function generateCoins(count) {
     x += 50;
   }
 }
-generateCoins(2);
+generateCoins(3);
+
+function loop() {
+  if (Player.dx >= cvs.width - 100) {
+    for (var floorsElement = 0; floorsElement < floors.length; floorsElement++) {
+      floors[floorsElement].dx -= 1;
+    }
+    Sceleton.dx -= 1;
+    Player.dx = cvs.width - 101;
+  }
+  if (Player.dx <= 100) {
+    for (var floorsElement = 0; floorsElement < floors.length; floorsElement++) {
+      floors[floorsElement].dx += 1;
+    }
+    Sceleton.dx += 1;
+    Player.dx = 101;
+  }
+}
 
 function generateFloors(count) {
   var x = 0;
@@ -77,21 +94,28 @@ function generateFloors(count) {
     floors[floorsElement] = new Floor('img/floor.jpg', x, 300, 50, 50);
     x += 50;
   }
-  floors[19] = new Floor('img/floor.jpg', 100, 250, 50, 50);
-  floors[20] = new Floor('img/floor.jpg', 100, 125, 50, 50);
-  floors[18] = new Floor('img/floor.jpg', 200, 250, 50, 50);
-  floors[17] = new Floor('img/floor.jpg', 200, 125, 50, 50);
-  floors[18] = new Floor('img/floor.jpg', 200, 250, 50, 50);
-  floors[17] = new Floor('img/floor.jpg', 300, 200, 50, 50);
-  floors[16] = new Floor('img/floor.jpg', 150, 125, 50, 50);
-  floors[15] = new Floor('img/floor.jpg', 200, 125, 50, 50);
-  floors[14] = new Floor('img/floor.jpg', 400, 150, 50, 50);
+  floors[23] = new Floor('img/floor.jpg', 100, 250, 50, 50);
+  floors[24] = new Floor('img/floor.jpg', 100, 125, 50, 50);
+  floors[22] = new Floor('img/floor.jpg', 200, 250, 50, 50);
+  floors[21] = new Floor('img/floor.jpg', 200, 125, 50, 50);
+  floors[22] = new Floor('img/floor.jpg', 200, 250, 50, 50);
+  floors[21] = new Floor('img/floor.jpg', 300, 200, 50, 50);
+  floors[20] = new Floor('img/floor.jpg', 150, 125, 50, 50);
+  floors[19] = new Floor('img/floor.jpg', 200, 125, 50, 50);
+  floors[18] = new Floor('img/floor.jpg', 400, 150, 50, 50);
   floors[5] = new Floor('img/floor.jpg', 400, 200, 50, 50);
   floors[6] = new Floor('img/floor.jpg', 400, 250, 50, 50);
   floors[7] = new Floor('img/floor.jpg', 450, 150, 50, 50);
   floors[13] = new Floor('img/floor.jpg', 600, 250, 50, 50);
+  x = 700
+  for (var floorsElement = 24; floorsElement < count; floorsElement++) {
+    floors[floorsElement] = new Floor('img/floor.jpg', x, 300, 50, 50);
+    x += 50;
+  }
+  floors[49] = new Floor('img/floor.jpg', 550, 200, 50, 50);
 }
-generateFloors(20);
+
+generateFloors(50);
 
 function keysPressed(event) {
   //alert(event.code);
@@ -163,7 +187,7 @@ function moveAnimation() {
     Player.sx = 64 * Player.frame;
   }
 }
-Player = new Players('img/rickardo.png', 0, 710, 64, 64, 50, 50, 64, 64);
+Player = new Players('img/rickardo.png', 0, 710, 64, 64, 450, 50, 64, 64);
 var jumpSpeed = [];
 
 function SceletonAnimation() {
@@ -323,6 +347,7 @@ function draw() {
   ctx.drawImage(Player.playerImage, Player.sx, Player.sy, Player.sw, Player.sh, Player.dx, Player.dy, Player.dw, Player.dh);
   ctx.drawImage(Sceleton.playerImage, Sceleton.sx, Sceleton.sy, Sceleton.sw, Sceleton.sh, Sceleton.dx, Sceleton.dy, Sceleton.dw, Sceleton.dh);
 }
+setInterval(loop, 1);
 setInterval(SceletonPhysics, 1);
 setInterval(SceletonAnimation, 1000 / 15);
 setInterval(coinAnimation, 1000 / 15);
