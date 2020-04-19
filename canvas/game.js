@@ -3,8 +3,7 @@ window.onload = function() {
   var cvs = document.getElementById('canvas');
   var ctx = cvs.getContext('2d');
   cvs.width = 928;
-  cvs.height = 793;
-  console.log(cvs.width)
+  cvs.height = 0;
   class Background {
     constructor(imageSrc, dx, dy, dw, dh) {
       this.image = new Image();
@@ -33,7 +32,7 @@ window.onload = function() {
 
   function generateBackgrounds(x, y) {
     for (var background = 0; background < backgroundLayersSrc.length; background++) {
-      backgroundLayers.push(new Background(backgroundLayersSrc[background], x, y, cvs.width, cvs.height));
+      backgroundLayers.push(new Background(backgroundLayersSrc[background], x, y, 928, 793));
     }
   }
   class Characters {
@@ -273,6 +272,7 @@ window.onload = function() {
       y += 50;
       x = 0;
     }
+    cvs.height = y;
     collectiblesList.push(coins);
     collisionObjectsList.push(floors);
     charactersList.push(Player);
@@ -515,7 +515,7 @@ window.onload = function() {
     window.addEventListener('keydown', keysPressed);
     window.addEventListener('keyup', keysUp);
     generateLevel(levelMaps[levelSelect]);
-    generateBackgrounds(0, levelMaps[levelSelect].length * 50 - cvs.height);
+    generateBackgrounds(0, levelMaps[levelSelect].length * 50 - 793);
     loopInterval = setInterval(loop, 1);
     sceletonAnimationInterval = setInterval(SceletonAnimation, 1000 / 15);
     coinAnimationInterval = setInterval(coinAnimation, 1000 / 15);
