@@ -1,0 +1,59 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Rubik Mono One', sans-serif;
+}
+
+.menu_wr {
+  position: fixed;
+  right: 0;
+  width: 50%;
+  height: 100vh;
+  display: flex;
+}
+
+.menu {
+  width: 20%;
+  height: 10em;
+}
+
+.levels {
+  padding: 0 0.5em;
+  width: 80%;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.level {
+  width: 3em;
+  height: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
+
+.name_input {
+  padding: 0 0.5em;
+  width: 80%;
+  height: 1.6em;
+  font-size: 1.5rem;
+  border: 0;
+  outline: none;
+  background-color: rgb(216, 216, 216);
+}
+
+.start_button {
+  padding: 0 0.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  color: white;
+  width: 80%;
+  height: 1.6em;
+  font-size: 1.5rem;
+  cursor: pointer;
+}

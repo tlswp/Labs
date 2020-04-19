@@ -1,7 +1,37 @@
+document.fullscreenEnabled = true;
 var cvs = document.getElementById('canvas');
 var ctx = cvs.getContext('2d');
-class Players {
-  constructor(playerImageLink, sx, sy, sw, sh, dx, dy, dw, dh) {
+cvs.width = 928;
+cvs.height = 793;
+console.log(cvs.width)
+class Background {
+  constructor(imageSrc, dx, dy, dw, dh) {
+    this.image = new Image();
+    this.image.src = imageSrc;
+    this.dx = dx;
+    this.dy = dy;
+    this.dw = dw;
+    this.dh = dh;
+  };
+  drawFloor() {
+    ctx.drawImage(this.image, this.dx, this.dy, this.dw, this.dh);
+  }
+}
+backgroundLayers = [];
+backgroundLayersSrc = [
+  'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
+  'backgroundLayers/Layer_0004_lights.png', 'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png', 'backgroundLayers/Layer_0007_lights.png',
+  'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
+]
+backgroundLayersSrc = backgroundLayersSrc.reverse();
+
+function generateBackgrounds(x, y) {
+  for (var background = 0; background < backgroundLayersSrc.length; background++) {
+    backgroundLayers.push(new Background(backgroundLayersSrc[background], x, y, cvs.width, cvs.height));
+  }
+}
+class Characters {
+  constructor(playerImageLink, sx, sy, sw, sh, dx, dy, dw, dh, character) {
     this.playerImage = new Image();
     this.playerImage.src = playerImageLink;
     this.sx = sx;
@@ -12,6 +42,8 @@ class Players {
     this.dy = dy;
     this.dw = dw;
     this.dh = dh;
+    this.mapX = 0;
+    this.mapY = 0;
     this.speed = 10;
     this.frame = 0;
     this.keyW = false;
@@ -19,13 +51,23 @@ class Players {
     this.keyS = false;
     this.keyD = false;
     this.ShiftLeft = false;
+    this.score = 0;
+    this.jumpPressed = false;
+    this.jumpCount = 0;
+    this.jumpLength = 65;
+    this.character = character;
+
+  }
+  checkHitBox() {
+    this.hitBoxW = this.dx + this.dw - 22;
+    this.hitBoxH = this.dy + this.dh - 8;
+    this.hitBoxX = this.dx + 22;
+    this.hitBoxY = this.dy + 8;
   }
 }
-Sceleton = new Players('img/sceleton.png', 0, 710, 64, 64, 550, 244, 64, 64);
-var jumpPressed = false;
-var jumpCount = 0;
-var jumpLength = 55;
-var jumpHeight = 0;
+var charactersList = [];
+var Player = new Characters('img/rickardo.png', 0, 710, 64, 64, 450, 50, 64, 64, 'player');
+var Sceleton = new Characters('img/sceleton.png', 0, 710, 64, 64, 550, 244, 64, 64, 'sceleton');
 class Floor {
   constructor(imageSrc, dx, dy, dw, dh) {
     this.image = new Image();
@@ -39,8 +81,8 @@ class Floor {
     ctx.drawImage(this.image, this.dx, this.dy, this.dw, this.dh);
   }
 }
-class Coin {
-  constructor(imageSrc, sx, sy, sw, sh, dx, dy, dw, dh) {
+class Collectibles {
+  constructor(imageSrc, sx, sy, sw, sh, dx, dy, dw, dh, type) {
     this.image = new Image();
     this.image.src = imageSrc;
     this.sx = sx;
@@ -52,70 +94,184 @@ class Coin {
     this.dw = dw;
     this.dh = dh;
     this.frame = 0;
-    this.coin = true;
+    this.notCollected = true;
+    this.type = type;
   };
   drawCoin() {
     ctx.drawImage(this.image, this.sx, this.sy, this.sw, this.sh, this.dx, this.dy, this.dw, this.dh);
   }
+  checkHitBox() {
+    this.hitBoxW = this.dx + this.dw - 0;
+    this.hitBoxH = this.dy + this.dh - 0;
+    this.hitBoxX = this.dx + 0;
+    this.hitBoxY = this.dy + 0;
+  }
 }
 var floors = [],
-  coins = [];
-
-function generateCoins(count) {
-  var x = 100;
-  for (var coin = 0; coin < count; coin++) {
-    coins[coin] = new Coin('img/coin.png', 0, 0, 16, 16, x + 25, 100 - 16, 16, 16);
-    x += 50;
-  }
-}
-generateCoins(3);
+  coins = [],
+  collectiblesList = [];
 
 function loop() {
-  if (Player.dx >= cvs.width - 100) {
-    for (var floorsElement = 0; floorsElement < floors.length; floorsElement++) {
-      floors[floorsElement].dx -= 1;
-    }
-    Sceleton.dx -= 1;
-    Player.dx = cvs.width - 101;
+  var maxLength = [];
+  levelMaps[levelSelect - 1].forEach(map => {
+    maxLength.push(map.length);
+  });
+  maxLength = Math.max.apply(null, maxLength);
+  if (Player.dx >= cvs.width / 2 && maxLength * 50 - Player.mapX >= cvs.width / 2 + 0) {
+    collisionObjectsList.forEach(collisionObjects => {
+      collisionObjects.forEach(collisionObject => {
+        collisionObject.dx -= 1;
+      });
+    });
+    collectiblesList.forEach(collectibles => {
+      collectibles.forEach(collectible => {
+        collectible.dx -= 1;
+      });
+    });
+    charactersList.forEach(character => {
+      character.dx -= 1;
+    });
   }
-  if (Player.dx <= 100) {
-    for (var floorsElement = 0; floorsElement < floors.length; floorsElement++) {
-      floors[floorsElement].dx += 1;
-    }
-    Sceleton.dx += 1;
-    Player.dx = 101;
+  if (Player.dx <= 100 && Player.mapX > 100) {
+    collisionObjectsList.forEach(collisionObjects => {
+      collisionObjects.forEach(collisionObject => {
+        collisionObject.dx += 1;
+      });
+    });
+    collectiblesList.forEach(collectibles => {
+      collectibles.forEach(collectible => {
+        collectible.dx += 1;
+      });
+    });
+    charactersList.forEach(character => {
+      character.dx += 1;
+    });
   }
 }
+var levelMaps = [
+  [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 4, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 0, 3, 0, 3, 0, 3, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  ],
+  [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 3, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 3, 1],
+    [1, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1],
+    [1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 4, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  ],
+  [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+    [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+    [1, 0, 2, 0, 1, 0, 4, 0, 0, 3, 0, 0, 0, 0, 1, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  ],
+  [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1, 1, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+    [1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  ],
+  [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 3, 3, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 2, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  ],
+  [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  ],
+  [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+    [1, 2, 1, 4, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  ],
+  [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 1],
+    [1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 3, 1],
+    [1, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 3, 1],
+    [1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 3, 1],
+    [1, 3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  ],
+]
+var levelMap = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+];
+var collisionObjectsList = [];
+var intersectionObjects = [];
 
-function generateFloors(count) {
+function generateLevel(levelMap) {
   var x = 0;
   var y = 0;
-  for (var floorsElement = 0; floorsElement < count; floorsElement++) {
-    floors[floorsElement] = new Floor('img/floor.jpg', x, 300, 50, 50);
-    x += 50;
+  for (var yCount = 0; yCount < levelMap.length; yCount++) {
+    for (var xCount = 0; xCount < levelMap[yCount].length; xCount++) {
+      if (levelMap[yCount][xCount] === 1) {
+        floors.push(new Floor('img/floor.jpg', x, y, 50, 50))
+      }
+      if (levelMap[yCount][xCount] === 2) {
+        Player.mapX = x;
+        Player.dx = x;
+        Player.dy = y - 20;
+      }
+      if (levelMap[yCount][xCount] === 3) {
+        coins.push(new Collectibles('img/coin.png', 0, 0, 16, 16, x + 16, y + 16, 16, 16, 'coin'));
+      }
+      if (levelMap[yCount][xCount] === 4) {
+        Sceleton = new Characters('img/sceleton.png', 0, 710, 64, 64, x, y - 20, 64, 64, 'sceleton');
+      }
+      x += 50;
+    }
+    y += 50;
+    x = 0;
   }
-  floors[23] = new Floor('img/floor.jpg', 100, 250, 50, 50);
-  floors[24] = new Floor('img/floor.jpg', 100, 125, 50, 50);
-  floors[22] = new Floor('img/floor.jpg', 200, 250, 50, 50);
-  floors[21] = new Floor('img/floor.jpg', 200, 125, 50, 50);
-  floors[22] = new Floor('img/floor.jpg', 200, 250, 50, 50);
-  floors[21] = new Floor('img/floor.jpg', 300, 200, 50, 50);
-  floors[20] = new Floor('img/floor.jpg', 150, 125, 50, 50);
-  floors[19] = new Floor('img/floor.jpg', 200, 125, 50, 50);
-  floors[18] = new Floor('img/floor.jpg', 400, 150, 50, 50);
-  floors[5] = new Floor('img/floor.jpg', 400, 200, 50, 50);
-  floors[6] = new Floor('img/floor.jpg', 400, 250, 50, 50);
-  floors[7] = new Floor('img/floor.jpg', 450, 150, 50, 50);
-  floors[13] = new Floor('img/floor.jpg', 600, 250, 50, 50);
-  x = 700
-  for (var floorsElement = 24; floorsElement < count; floorsElement++) {
-    floors[floorsElement] = new Floor('img/floor.jpg', x, 300, 50, 50);
-    x += 50;
-  }
-  floors[49] = new Floor('img/floor.jpg', 550, 200, 50, 50);
+  collectiblesList.push(coins);
+  collisionObjectsList.push(floors);
+  charactersList.push(Player);
+  charactersList.push(Sceleton);
 }
-
-generateFloors(50);
 
 function keysPressed(event) {
   //alert(event.code);
@@ -187,8 +343,6 @@ function moveAnimation() {
     Player.sx = 64 * Player.frame;
   }
 }
-Player = new Players('img/rickardo.png', 0, 710, 64, 64, 450, 50, 64, 64);
-var jumpSpeed = [];
 
 function SceletonAnimation() {
   if (Sceleton.route) {
@@ -206,63 +360,59 @@ function SceletonAnimation() {
 function SceletonMove() {
   if (Sceleton.route) { Sceleton.dx += 1; }
   if (!Sceleton.route) { Sceleton.dx -= 1; }
+  // if (character.character === 'sceleton') {
+  //   if (character.route) { character.dx += 1; }
+  //   if (!character.route) { character.dx -= 1; }
+  // }
 }
 
-function SceletonPhysics() {
-  var height = 64 - 8,
-    y = 8,
-    width = 64 - 22,
-    x = 22;
-  for (var floorsElement = 0; floorsElement < floors.length; floorsElement++) {
-    if (Sceleton.dy + height > floors[floorsElement].dy && Sceleton.dy + y < floors[floorsElement].dy + floors[floorsElement].dh &&
-      Sceleton.dx + width === floors[floorsElement].dx) {
-      Sceleton.route = false;
+function intersection(intersectionObjectList) {
+  intersectionObjectList.forEach(intersectionObject => {
+    intersectionObject.checkHitBox();
+    Player.checkHitBox();
+    if (intersectionObject.hitBoxH > Player.hitBoxY && intersectionObject.hitBoxY < Player.hitBoxH &&
+      intersectionObject.hitBoxW > Player.hitBoxX && intersectionObject.hitBoxX < Player.hitBoxW) {
+      if (intersectionObject.character === 'sceleton') {
+        start(levelSelect - 1);
+      }
+      if (intersectionObject.type === 'coin' && intersectionObject.notCollected) {
+        intersectionObject.notCollected = false;
+        Player.score += 1;
+        score.innerHTML = 'Счет: ' + Player.score;
+        if (Player.score >= intersectionObjectList.length) {
+          Player.score = 0;
+          score.innerHTML = 'Счет: ' + 0;
+          levelSelect = +levelSelect;
+          levelSelect += 1;
+          start(levelSelect - 1);
+        }
+      }
     }
-    if (Sceleton.dy + height > floors[floorsElement].dy && Sceleton.dy + y < floors[floorsElement].dy + floors[floorsElement].dh &&
-      Sceleton.dx + x === floors[floorsElement].dx + floors[floorsElement].dw) {
-      Sceleton.route = true;
-    }
-  }
-  if (Sceleton.dy + height > Player.dy - y && Sceleton.dy + y < Player.dy + height &&
-    Sceleton.dx + width > Player.dx + x && Sceleton.dx + x < Player.dx + width) {
-    Player.dx = 0;
-    Player.dy = 0;
-  }
+  });
 }
 
-function generateJumpSpeed() {
-  jumpSpeed = [];
-  jumpSpeedReverse = [];
-  for (var jumpCount = 1; jumpCount < jumpLength / 2; jumpCount++) {
-    if (jumpCount % 2 === 1) {
-      jumpSpeed.push(jumpCount / 10);
-      jumpSpeedReverse.push(jumpCount / 10);
-    }
-  }
-  jumpSpeed = jumpSpeed.concat(jumpSpeedReverse.reverse())
-}
-generateJumpSpeed()
 var jump = setTimeout(function tick() {
-  if (jumpPressed) {
+  if (Player.jumpPressed) {
     Player.dy -= 1;
-    jumpCount++;
+    Player.jumpCount++;
   }
   if (Player.KeyW === true) {
-    jumpPressed = true;
+    Player.jumpPressed = true;
   }
-  if (jumpCount > jumpLength) {
-    jumpPressed = false;
-    jumpHeight = 0;
+  if (Player.jumpCount > Player.jumpLength) {
+    Player.jumpPressed = false;
   }
-  jump = setTimeout(tick, jumpSpeed[jumpCount]);
-}, jumpSpeed[jumpCount])
+  jump = setTimeout(tick, +('0.' + Player.jumpCount));
+}, +('0.' + Player.jumpCount));
 
 var move = setTimeout(function tick() {
   if (Player.KeyD === true && Player.KeyS !== true) {
     Player.dx += 1;
+    Player.mapX += 1;
   }
   if (Player.KeyA === true && Player.KeyS !== true) {
     Player.dx -= 1;
+    Player.mapX -= 1;
   }
   if (Player.ShiftLeft === true) {
     Player.speed = 5;
@@ -271,45 +421,60 @@ var move = setTimeout(function tick() {
     Player.speed = 10;
   }
   move = setTimeout(tick, Player.speed)
-}, Player.speed)
+}, Player.speed);
+var grav = 1,
+  falling = true;
+
+
 
 function physics() {
-  if (jumpPressed) {
-    Player.gravitationCount = 0;
-  }
-  if (!jumpPressed) {
-    Player.gravitationCount = 1
-  }
-  var height = 64 - 8,
-    y = 8,
-    width = 64 - 22,
-    x = 22;
-  window.addEventListener('keydown', keysPressed);
-  window.addEventListener('keyup', keysUp);
-  for (var floorsElement = 0; floorsElement < floors.length; floorsElement++) {
-    if ((floors[floorsElement].dy + floors[floorsElement].dh) - (Player.dy + y) === 0 &&
-      ((floors[floorsElement].dx <= Player.dx + width && Player.dx + width < floors[floorsElement].dx + floors[floorsElement].dw) ||
-        (floors[floorsElement].dx + floors[floorsElement].dw >= Player.dx + x && floors[floorsElement].dx <= Player.dx + width))) {
-      Player.dy += 1;
+  charactersList.forEach(character => {
+    if (character.jumpPressed) {
+      character.gravitationCount = 0;
     }
-    if (floors[floorsElement].dy - (Player.dy + height) === 0 &&
-      ((floors[floorsElement].dx <= Player.dx + width && Player.dx + width < floors[floorsElement].dx + floors[floorsElement].dw) ||
-        (floors[floorsElement].dx + floors[floorsElement].dw >= Player.dx + x && floors[floorsElement].dx <= Player.dx + width))) {
-      Player.gravitationCount = 0;
-      if (!jumpPressed) {
-        jumpCount = 0;
-      }
+    if (!character.jumpPressed) {
+      character.gravitationCount = 1;
     }
-    if (Player.dy + height > floors[floorsElement].dy && Player.dy + y < floors[floorsElement].dy + floors[floorsElement].dh &&
-      Player.dx + width === floors[floorsElement].dx) {
-      Player.dx -= 1;
-    }
-    if (Player.dy + height > floors[floorsElement].dy && Player.dy + y < floors[floorsElement].dy + floors[floorsElement].dh &&
-      Player.dx + x === floors[floorsElement].dx + floors[floorsElement].dw) {
-      Player.dx += 1;
-    }
-  }
-  Player.dy += Player.gravitationCount;
+    collisionObjectsList.forEach(collisionObjectArray => {
+      collisionObjectArray.forEach(collisionObject => {
+        character.checkHitBox();
+        if ((collisionObject.dy + collisionObject.dh) - (character.hitBoxY) === 0 &&
+          ((collisionObject.dx <= character.hitBoxW && character.hitBoxW < collisionObject.dx + collisionObject.dw) ||
+            (collisionObject.dx + collisionObject.dw >= character.hitBoxX && collisionObject.dx <= character.hitBoxW))) {
+          character.dy += 1;
+        }
+        if (collisionObject.dy - (character.hitBoxH) === 0 &&
+          ((collisionObject.dx <= character.hitBoxW && character.hitBoxW < collisionObject.dx + collisionObject.dw) ||
+            (collisionObject.dx + collisionObject.dw >= character.hitBoxX && collisionObject.dx <= character.hitBoxW))) {
+          character.gravitationCount = 0;
+          if (!character.jumpPressed) {
+            character.jumpCount = 0;
+          }
+        }
+        if (character.hitBoxH > collisionObject.dy && character.hitBoxY < collisionObject.dy + collisionObject.dh &&
+          character.hitBoxW === collisionObject.dx) {
+          character.dx -= 1;
+          character.mapX -= 1;
+          if (character.character === 'sceleton') {
+            character.route = false;
+          }
+        }
+        if (character.hitBoxH > collisionObject.dy && character.hitBoxY < collisionObject.dy + collisionObject.dh &&
+          character.hitBoxX === collisionObject.dx + collisionObject.dw) {
+          character.dx += 1;
+          character.mapX += 1;
+          if (character.character === 'sceleton') {
+            character.route = true;
+          }
+        }
+      });
+    });
+    character.dy += character.gravitationCount;
+  });
+  collectiblesList.forEach(collectibles => {
+    intersection(collectibles);
+  });
+  intersection(charactersList);
 }
 
 function coinAnimation() {
@@ -319,39 +484,88 @@ function coinAnimation() {
   }
 }
 
-function coinPhysics() {
-  var height = 64 - 8,
-    y = 8,
-    width = 64 - 22,
-    x = 22;
-  for (var coin = 0; coin < coins.length; coin++) {
-    if (coins[coin].dy > Player.dy - y && coins[coin].dy < Player.dy + height &&
-      coins[coin].dx > Player.dx + x && coins[coin].dx < Player.dx + width && coins[coin].coin) {
-      coins[coin].coin = false;
-    }
-  }
-}
-
 function draw() {
   SceletonMove();
-  moveAnimation();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (var background = 0; background < backgroundLayers.length; background++) {
+    backgroundLayers[background].drawFloor();
+  }
   for (var floorsElement = 0; floorsElement < floors.length; floorsElement++) {
     floors[floorsElement].drawFloor();
   }
   for (var coin = 0; coin < coins.length; coin++) {
-    if (coins[coin].coin) {
+    if (coins[coin].notCollected) {
       coins[coin].drawCoin();
     }
   }
   ctx.drawImage(Player.playerImage, Player.sx, Player.sy, Player.sw, Player.sh, Player.dx, Player.dy, Player.dw, Player.dh);
   ctx.drawImage(Sceleton.playerImage, Sceleton.sx, Sceleton.sy, Sceleton.sw, Sceleton.sh, Sceleton.dx, Sceleton.dy, Sceleton.dw, Sceleton.dh);
 }
-setInterval(loop, 1);
-setInterval(SceletonPhysics, 1);
-setInterval(SceletonAnimation, 1000 / 15);
-setInterval(coinAnimation, 1000 / 15);
-setInterval(coinPhysics, 1);
-setInterval(physics, 1);
-setInterval(draw, 1000 / 30);
+var loopInterval, sceletonPhysicsInterval, sceletonAnimationInterval, coinAnimationInterval, coinPhysicsInterval, physicsInterval, drawInterval, moveAnimationInterval;
+
+function start(levelSelect) {
+  close();
+  score.innerHTML = 'Счет: 0'
+  window.addEventListener('keydown', keysPressed);
+  window.addEventListener('keyup', keysUp);
+  generateLevel(levelMaps[levelSelect]);
+  generateBackgrounds(0, levelMaps[levelSelect].length * 50 - cvs.height);
+  loopInterval = setInterval(loop, 1);
+  sceletonAnimationInterval = setInterval(SceletonAnimation, 1000 / 15);
+  coinAnimationInterval = setInterval(coinAnimation, 1000 / 15);
+  physicsInterval = setInterval(physics, 1);
+  moveAnimationInterval = setInterval(moveAnimation, 1000 / 15);
+  drawInterval = setInterval(draw, 1000 / 30);
+}
+
+function close() {
+  Player.score = 0;
+  window.removeEventListener('keydown', keysPressed);
+  window.removeEventListener('keydown', keysUp);
+  floors = [];
+  coins = [];
+  backgroundLayers = [];
+  collisionObjectsList = [];
+  intersectionObjects = [];
+  charactersList = [];
+  collectiblesList = [];
+  clearInterval(loopInterval);
+  clearInterval(sceletonAnimationInterval);
+  clearInterval(coinAnimationInterval);
+  clearInterval(physicsInterval);
+  clearInterval(drawInterval);
+  clearInterval(moveAnimationInterval);
+}
+//start();
+window.addEventListener('keydown', function() {
+  if (this.event.key === 'Escape') {
+    close();
+  }
+})
+var levels = document.querySelector('.levels'),
+  score = document.querySelector('.score'),
+  levelSelect;
+for (var level = 0; level < levelMaps.length; level++) {
+  levels.innerHTML += '<div class="level">' + (level + 1) + '</div>';
+}
+levels.addEventListener('click', function(event) {
+  console.log(event.target);
+  if (event.target.className === 'level') {
+    levelSelect = event.target.innerHTML;
+  }
+})
+document.querySelector('.start_button').addEventListener('click', function() {
+  start(levelSelect - 1);
+  //fullscreen();
+});
 window.onload = function() {}
+
+function fullscreen() {
+  var el = document.getElementById('canvas');
+
+  if (el.webkitRequestFullScreen) {
+    el.webkitRequestFullScreen();
+  } else {
+    el.mozRequestFullScreen();
+  }
+}
