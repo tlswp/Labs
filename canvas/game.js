@@ -2,7 +2,7 @@ window.onload = function() {
   document.fullscreenEnabled = true;
   var cvs = document.getElementById('canvas');
   var ctx = cvs.getContext('2d');
-  cvs.width = 928;
+  cvs.width = document.documentElement.clientWidth / 2;
   cvs.height = 0;
   class Background {
     constructor(imageSrc, dx, dy, dw, dh) {
@@ -13,10 +13,11 @@ window.onload = function() {
       this.dw = dw;
       this.dh = dh;
     };
-    drawFloor() {
+    draw() {
       ctx.drawImage(this.image, this.dx, this.dy, this.dw, this.dh);
     }
   }
+  var backgroundsList = [];
   backgroundLayers = [];
   backgroundLayersSrc = [
       'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
@@ -31,9 +32,21 @@ window.onload = function() {
   backgroundLayersSrc = backgroundLayersSrc.reverse();
 
   function generateBackgrounds(x, y) {
-    for (var background = 0; background < backgroundLayersSrc.length; background++) {
-      backgroundLayers.push(new Background(backgroundLayersSrc[background], x, y, 928, 793));
+    var count = 0;
+    var backgroundAdded = false;
+    while (maxLength * 50 / 928 > count || !backgroundAdded) {
+      backgroundAdded = true;
+      console.log(maxLength * 50 / 928)
+      var backgroundLayers = [];
+      for (var background = 0; background < backgroundLayersSrc.length; background++) {
+        backgroundLayers.push(new Background(backgroundLayersSrc[background], 928 * count, levelMaps[levelSelect - 1].length * 50 - 793, 928, 793));
+      }
+      backgroundsList.push(backgroundLayers);
+      count += 1;
     }
+    // for (var background = 0; background < backgroundLayersSrc.length; background++) {
+    //   backgroundLayers.push(new Background(backgroundLayersSrc[background], x, y, 928, 793));
+    // }
   }
   class Characters {
     constructor(playerImageLink, sx, sy, sw, sh, dx, dy, dw, dh, character) {
@@ -114,14 +127,10 @@ window.onload = function() {
   }
   var floors = [],
     coins = [],
-    collectiblesList = [];
+    collectiblesList = [],
+    maxLength = [];
 
   function loop() {
-    var maxLength = [];
-    levelMaps[levelSelect - 1].forEach(map => {
-      maxLength.push(map.length);
-    });
-    maxLength = Math.max.apply(null, maxLength);
     if (Player.dx >= cvs.width / 2 && maxLength * 50 - Player.mapX >= cvs.width / 2 + 0) {
       collisionObjectsList.forEach(collisionObjects => {
         collisionObjects.forEach(collisionObject => {
@@ -136,8 +145,15 @@ window.onload = function() {
       charactersList.forEach(character => {
         character.dx -= 1;
       });
+      backgroundsList.forEach(backgroundLayers => {
+        var count = 1;
+        backgroundLayers.forEach(backgroundLayer => {
+          count += 1;
+          backgroundLayer.dx -= count / 10;
+        });
+      });
     }
-    if (Player.dx <= 100 && Player.mapX > 100) {
+    if (Player.dx <= cvs.width / 2 && Player.mapX > cvs.width / 2) {
       collisionObjectsList.forEach(collisionObjects => {
         collisionObjects.forEach(collisionObject => {
           collisionObject.dx += 1;
@@ -150,6 +166,13 @@ window.onload = function() {
       });
       charactersList.forEach(character => {
         character.dx += 1;
+      });
+      backgroundsList.forEach(backgroundLayers => {
+        var count = 1;
+        backgroundLayers.forEach(backgroundLayer => {
+          count += 1;
+          backgroundLayer.dx += count / 10;
+        });
       });
     }
   }
@@ -200,10 +223,10 @@ window.onload = function() {
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [1, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
       [1, 3, 3, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 2, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 0, 3, 0, 0, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1],
+      [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1],
+      [1, 2, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ],
     [
@@ -215,6 +238,15 @@ window.onload = function() {
       [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
       [1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ],
+    [
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+      [1, 2, 1, 4, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ],
     [
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -329,38 +361,41 @@ window.onload = function() {
   }
 
   function moveAnimation() {
-    if (Player.KeyW === true) {}
-    if (Player.KeyW !== false) {}
-    if (Player.KeyD === true && Player.KeyS !== true) {
-      Player.sy = 710;
-      Player.frame = Player.frame % 8 + 1;
-      Player.sx = 64 * Player.frame;
-    }
-    if (Player.KeyA === true && Player.KeyS !== true) {
-      Player.sy = 582;
-      Player.frame = Player.frame % 8 + 1;
-      Player.sx = 64 * Player.frame;
-    }
-    if (Player.KeyS === true && Player.KeyA !== true && Player.KeyD !== true) {
-      Player.sy = 1285;
-      if (Player.frame < 3) {
-        Player.frame += 1;
+    charactersList.forEach(character => {
+      if (character.character === 'player') {
+        if (Player.KeyW === true) {}
+        if (Player.KeyW !== false) {}
+        if (Player.KeyD === true && Player.KeyS !== true) {
+          Player.sy = 710;
+          Player.frame = Player.frame % 8 + 1;
+          Player.sx = 64 * Player.frame;
+        }
+        if (Player.KeyA === true && Player.KeyS !== true) {
+          Player.sy = 582;
+          Player.frame = Player.frame % 8 + 1;
+          Player.sx = 64 * Player.frame;
+        }
+        if (Player.KeyS === true && Player.KeyA !== true && Player.KeyD !== true) {
+          Player.sy = 1285;
+          if (Player.frame < 3) {
+            Player.frame += 1;
+          }
+          Player.sx = 64 * Player.frame;
+        }
       }
-      Player.sx = 64 * Player.frame;
-    }
-  }
-
-  function SceletonAnimation() {
-    if (Sceleton.route) {
-      Sceleton.sy = 710;
-      Sceleton.frame = Sceleton.frame % 8 + 1;
-      Sceleton.sx = 64 * Sceleton.frame;
-    }
-    if (!Sceleton.route) {
-      Sceleton.sy = 582;
-      Sceleton.frame = Sceleton.frame % 8 + 1;
-      Sceleton.sx = 64 * Sceleton.frame;
-    }
+      if (character.character === 'sceleton') {
+        if (Sceleton.route) {
+          Sceleton.sy = 710;
+          Sceleton.frame = Sceleton.frame % 8 + 1;
+          Sceleton.sx = 64 * Sceleton.frame;
+        }
+        if (!Sceleton.route) {
+          Sceleton.sy = 582;
+          Sceleton.frame = Sceleton.frame % 8 + 1;
+          Sceleton.sx = 64 * Sceleton.frame;
+        }
+      }
+    });
   }
 
   function SceletonMove() {
@@ -384,10 +419,10 @@ window.onload = function() {
         if (intersectionObject.type === 'coin' && intersectionObject.notCollected) {
           intersectionObject.notCollected = false;
           Player.score += 1;
-          score.innerHTML = 'Счет: ' + Player.score;
+          score.innerHTML = 'Счет: ' + Player.score + '/' + coins.length;
           if (Player.score >= intersectionObjectList.length) {
             Player.score = 0;
-            score.innerHTML = 'Счет: ' + 0;
+            score.innerHTML = 'Счет: ' + 0 + '/' + coins.length;
             levelSelect = +levelSelect;
             levelSelect += 1;
             start(levelSelect - 1);
@@ -428,10 +463,6 @@ window.onload = function() {
     }
     move = setTimeout(tick, Player.speed)
   }, Player.speed);
-  var grav = 1,
-    falling = true;
-
-
 
   function physics() {
     charactersList.forEach(character => {
@@ -493,9 +524,11 @@ window.onload = function() {
   function draw() {
     SceletonMove();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (var background = 0; background < backgroundLayers.length; background++) {
-      backgroundLayers[background].drawFloor();
-    }
+    backgroundsList.forEach(backgroundLayers => {
+      backgroundLayers.forEach(backgroundLayer => {
+        backgroundLayer.draw();
+      });
+    });
     for (var floorsElement = 0; floorsElement < floors.length; floorsElement++) {
       floors[floorsElement].drawFloor();
     }
@@ -511,13 +544,17 @@ window.onload = function() {
 
   function start(levelSelect) {
     close();
-    score.innerHTML = 'Счет: 0'
     window.addEventListener('keydown', keysPressed);
     window.addEventListener('keyup', keysUp);
     generateLevel(levelMaps[levelSelect]);
+    maxLength = [];
+    levelMaps[levelSelect].forEach(map => {
+      maxLength.push(map.length);
+    });
+    maxLength = Math.max.apply(null, maxLength);
+    score.innerHTML = 'Счет: 0/' + coins.length;
     generateBackgrounds(0, levelMaps[levelSelect].length * 50 - 793);
     loopInterval = setInterval(loop, 1);
-    sceletonAnimationInterval = setInterval(SceletonAnimation, 1000 / 15);
     coinAnimationInterval = setInterval(coinAnimation, 1000 / 15);
     physicsInterval = setInterval(physics, 1);
     moveAnimationInterval = setInterval(moveAnimation, 1000 / 15);
@@ -535,8 +572,8 @@ window.onload = function() {
     intersectionObjects = [];
     charactersList = [];
     collectiblesList = [];
+    backgroundsList = []
     clearInterval(loopInterval);
-    clearInterval(sceletonAnimationInterval);
     clearInterval(coinAnimationInterval);
     clearInterval(physicsInterval);
     clearInterval(drawInterval);
