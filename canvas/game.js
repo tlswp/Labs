@@ -84,16 +84,20 @@ window.onload = function() {
   var Player = new Characters('img/rickardo.png', 0, 710, 64, 64, 450, 50, 64, 64, 'player');
   var Sceleton = new Characters('img/sceleton.png', 0, 710, 64, 64, 550, 244, 64, 64, 'sceleton');
   class Floor {
-    constructor(imageSrc, dx, dy, dw, dh) {
+    constructor(imageSrc, sx, sy, sw, sh, dx, dy, dw, dh) {
       this.image = new Image();
       this.image.src = imageSrc;
+      this.sx = sx;
+      this.sy = sy;
+      this.sw = sw;
+      this.sh = sh;
       this.dx = dx;
       this.dy = dy;
       this.dw = dw;
       this.dh = dh;
     };
     drawFloor() {
-      ctx.drawImage(this.image, this.dx, this.dy, this.dw, this.dh);
+      ctx.drawImage(this.image, this.sx, this.sy, this.sw, this.sh, this.dx, this.dy, this.dw, this.dh);
     }
   }
   class Collectibles {
@@ -277,13 +281,18 @@ window.onload = function() {
   var collisionObjectsList = [];
   var intersectionObjects = [];
 
+  function randomInteger(min, max) {
+    let rand = min - 0.5 + Math.random() * (max - min + 1);
+    return Math.round(rand);
+  }
+
   function generateLevel(levelMap) {
     var x = 0;
     var y = 0;
     for (var yCount = 0; yCount < levelMap.length; yCount++) {
       for (var xCount = 0; xCount < levelMap[yCount].length; xCount++) {
         if (levelMap[yCount][xCount] === 1) {
-          floors.push(new Floor('img/floor.jpg', x, y, 50, 50))
+          floors.push(new Floor('img/floor.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 50, 50))
         }
         if (levelMap[yCount][xCount] === 2) {
           Player.mapX = x;
@@ -309,7 +318,6 @@ window.onload = function() {
   }
 
   function keysPressed(event) {
-    //alert(event.code);
     switch (event.code) {
       case 'KeyD':
         Player.KeyD = true;
@@ -406,7 +414,12 @@ window.onload = function() {
   var Sounds = {
     gameOverSound: new Audio('audio/game-over-sound.wav'),
     gameOverVoice: new Audio('audio/game-over-voice.wav'),
-    gameCoinSound: new Audio('audio/coin-sound.wav')
+    gameCoinSound: new Audio('audio/coin-sound.wav'),
+    gameWinVoices: [new Audio('audio/win_voice_1.flac'), new Audio('audio/win_voice_2.flac'), new Audio('audio/win_voice_3.flac'), new Audio('audio/win_voice_4.flac'),
+      new Audio('audio/win_voice_5.flac'), new Audio('audio/win_voice_6.flac'), new Audio('audio/win_voice_7.flac')
+    ],
+    gameWinSound: new Audio('audio/win_sound.wav'),
+    gameMainThemeSound: new Audio('audio/main_theme.mp3')
   }
 
   function intersection(intersectionObjectList) {
@@ -423,10 +436,10 @@ window.onload = function() {
             Sounds.gameOverVoice.currentTime = 0;
             Sounds.gameOverVoice.volume = 0.8;
             Sounds.gameOverVoice.play();
-            ctx.font = "48px Rubik Mono One";
-            ctx.fillStyle = "white";
-            ctx.textAlign = "center";
-            ctx.fillText("Game Over", cvs.width / 2, cvs.height / 2);
+            ctx.font = '48px Rubik Mono One';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.fillText('Game Over', cvs.width / 2, cvs.height / 2);
           }, 100);
           close();
           setTimeout(function() {
@@ -439,15 +452,25 @@ window.onload = function() {
           intersectionObject.notCollected = false;
           Player.score += 1;
           score.innerHTML = 'Счет: ' + Player.score + '/' + coins.length;
-          setTimeout(function() {
-            if (Player.score >= intersectionObjectList.length) {
+          if (Player.score >= intersectionObjectList.length) {
+            var rNum = randomInteger(0, 6),
+              winPhrases = ['You win!', 'Congratulation!', 'Success!', 'Awesome!', 'Yeah!', 'Great!', 'Amazing!', 'Fantastic!'];
+            ctx.font = '48px Rubik Mono One';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.fillText(winPhrases[rNum], cvs.width / 2, cvs.height / 2);
+            close();
+            Sounds.gameWinSound.play();
+            Sounds.gameWinVoices[rNum].play();
+            console.log(Sounds.gameWinVoices[rNum].duration);
+            setTimeout(function() {
               Player.score = 0;
               score.innerHTML = 'Счет: ' + 0 + '/' + coins.length;
               levelSelect = +levelSelect;
               levelSelect += 1;
               start(levelSelect - 1);
-            }
-          }, 500);
+            }, 2000);
+          }
         }
       }
     });
@@ -560,19 +583,15 @@ window.onload = function() {
     }
     ctx.drawImage(Player.playerImage, Player.sx, Player.sy, Player.sw, Player.sh, Player.dx, Player.dy, Player.dw, Player.dh);
     ctx.drawImage(Sceleton.playerImage, Sceleton.sx, Sceleton.sy, Sceleton.sw, Sceleton.sh, Sceleton.dx, Sceleton.dy, Sceleton.dw, Sceleton.dh);
-
-    function getImage() {
-      var imageData = cvs.toDataURL();
-      var image = new Image();
-      image.src = imageData;
-      return image;
+    if (Sounds.gameMainThemeSound.duration <= Sounds.gameMainThemeSound.currentTime) {
+      Sounds.gameMainThemeSound.play();
     }
   }
   var loopInterval, sceletonPhysicsInterval, sceletonAnimationInterval, coinAnimationInterval, coinPhysicsInterval, physicsInterval, drawInterval, moveAnimationInterval;
 
   function start(levelSelect) {
-    console.log();
     close();
+    Sounds.gameMainThemeSound.play();
     window.addEventListener('keydown', keysPressed);
     window.addEventListener('keyup', keysUp);
     generateLevel(levelMaps[levelSelect]);
@@ -592,6 +611,8 @@ window.onload = function() {
   }
 
   function close() {
+    Sounds.gameMainThemeSound.currentTime = 0;
+    Sounds.gameMainThemeSound.pause();
     Player.score = 0;
     window.removeEventListener('keydown', keysPressed);
     window.removeEventListener('keydown', keysUp);
