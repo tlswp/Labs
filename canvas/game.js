@@ -20,15 +20,15 @@ window.onload = function() {
   var backgroundsList = [];
   backgroundLayers = [];
   backgroundLayersSrc = [
-      'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
-      'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png',
-      'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
-    ]
-    // backgroundLayersSrc = [
-    //   'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
-    //   'backgroundLayers/Layer_0004_lights.png', 'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png', 'backgroundLayers/Layer_0007_lights.png',
-    //   'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
-    // ]
+    'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
+    'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png',
+    'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
+  ]
+  backgroundLayersSrc = [
+    'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
+    'backgroundLayers/Layer_0004_lights.png', 'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png', 'backgroundLayers/Layer_0007_lights.png',
+    'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
+  ]
   backgroundLayersSrc = backgroundLayersSrc.reverse();
 
   function generateBackgrounds(x, y) {
@@ -44,9 +44,6 @@ window.onload = function() {
       backgroundsList.push(backgroundLayers);
       count += 1;
     }
-    // for (var background = 0; background < backgroundLayersSrc.length; background++) {
-    //   backgroundLayers.push(new Background(backgroundLayersSrc[background], x, y, 928, 793));
-    // }
   }
   class Characters {
     constructor(playerImageLink, sx, sy, sw, sh, dx, dy, dw, dh, character) {
@@ -148,12 +145,12 @@ window.onload = function() {
       backgroundsList.forEach(backgroundLayers => {
         var count = 1;
         backgroundLayers.forEach(backgroundLayer => {
+          backgroundLayer.dx -= count / (backgroundLayers.length);
           count += 1;
-          backgroundLayer.dx -= count / 10;
         });
       });
     }
-    if (Player.dx <= cvs.width / 2 && Player.mapX > cvs.width / 2) {
+    if (Player.dx <= (cvs.width / 2) - 5 && Player.mapX > cvs.width / 2) {
       collisionObjectsList.forEach(collisionObjects => {
         collisionObjects.forEach(collisionObject => {
           collisionObject.dx += 1;
@@ -170,8 +167,8 @@ window.onload = function() {
       backgroundsList.forEach(backgroundLayers => {
         var count = 1;
         backgroundLayers.forEach(backgroundLayer => {
+          backgroundLayer.dx += count / (backgroundLayers.length);
           count += 1;
-          backgroundLayer.dx += count / 10;
         });
       });
     }
@@ -406,6 +403,11 @@ window.onload = function() {
     //   if (!character.route) { character.dx -= 1; }
     // }
   }
+  var Sounds = {
+    gameOverSound: new Audio('audio/game-over-sound.wav'),
+    gameOverVoice: new Audio('audio/game-over-voice.wav'),
+    gameCoinSound: new Audio('audio/coin-sound.wav')
+  }
 
   function intersection(intersectionObjectList) {
     intersectionObjectList.forEach(intersectionObject => {
@@ -414,19 +416,38 @@ window.onload = function() {
       if (intersectionObject.hitBoxH > Player.hitBoxY && intersectionObject.hitBoxY < Player.hitBoxH &&
         intersectionObject.hitBoxW > Player.hitBoxX && intersectionObject.hitBoxX < Player.hitBoxW) {
         if (intersectionObject.character === 'sceleton') {
-          start(levelSelect - 1);
+          setTimeout(function() {
+            Sounds.gameOverSound.currentTime = 0;
+            Sounds.gameOverSound.volume = 0.2;
+            Sounds.gameOverSound.play();
+            Sounds.gameOverVoice.currentTime = 0;
+            Sounds.gameOverVoice.volume = 0.8;
+            Sounds.gameOverVoice.play();
+            ctx.font = "48px Rubik Mono One";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.fillText("Game Over", cvs.width / 2, cvs.height / 2);
+          }, 100);
+          close();
+          setTimeout(function() {
+            start(levelSelect - 1);
+          }, 4500);
         }
         if (intersectionObject.type === 'coin' && intersectionObject.notCollected) {
+          Sounds.gameCoinSound.currentTime = 0;
+          Sounds.gameCoinSound.play();
           intersectionObject.notCollected = false;
           Player.score += 1;
           score.innerHTML = 'Счет: ' + Player.score + '/' + coins.length;
-          if (Player.score >= intersectionObjectList.length) {
-            Player.score = 0;
-            score.innerHTML = 'Счет: ' + 0 + '/' + coins.length;
-            levelSelect = +levelSelect;
-            levelSelect += 1;
-            start(levelSelect - 1);
-          }
+          setTimeout(function() {
+            if (Player.score >= intersectionObjectList.length) {
+              Player.score = 0;
+              score.innerHTML = 'Счет: ' + 0 + '/' + coins.length;
+              levelSelect = +levelSelect;
+              levelSelect += 1;
+              start(levelSelect - 1);
+            }
+          }, 500);
         }
       }
     });
@@ -539,10 +560,18 @@ window.onload = function() {
     }
     ctx.drawImage(Player.playerImage, Player.sx, Player.sy, Player.sw, Player.sh, Player.dx, Player.dy, Player.dw, Player.dh);
     ctx.drawImage(Sceleton.playerImage, Sceleton.sx, Sceleton.sy, Sceleton.sw, Sceleton.sh, Sceleton.dx, Sceleton.dy, Sceleton.dw, Sceleton.dh);
+
+    function getImage() {
+      var imageData = cvs.toDataURL();
+      var image = new Image();
+      image.src = imageData;
+      return image;
+    }
   }
   var loopInterval, sceletonPhysicsInterval, sceletonAnimationInterval, coinAnimationInterval, coinPhysicsInterval, physicsInterval, drawInterval, moveAnimationInterval;
 
   function start(levelSelect) {
+    console.log();
     close();
     window.addEventListener('keydown', keysPressed);
     window.addEventListener('keyup', keysUp);
@@ -553,6 +582,7 @@ window.onload = function() {
     });
     maxLength = Math.max.apply(null, maxLength);
     score.innerHTML = 'Счет: 0/' + coins.length;
+    cvs.style.top = (document.documentElement.clientHeight - levelMaps[levelSelect].length * 50) / 2 + 'px';
     generateBackgrounds(0, levelMaps[levelSelect].length * 50 - 793);
     loopInterval = setInterval(loop, 1);
     coinAnimationInterval = setInterval(coinAnimation, 1000 / 15);
@@ -599,17 +629,17 @@ window.onload = function() {
   })
   document.querySelector('.start_button').addEventListener('click', function() {
     start(levelSelect - 1);
-    //fullscreen();
+    fullscreen();
   });
   window.onload = function() {}
 
   function fullscreen() {
     var el = document.getElementById('canvas');
 
-    if (el.webkitRequestFullScreen) {
-      el.webkitRequestFullScreen();
+    if (document.documentElement.webkitRequestFullScreen) {
+      document.documentElement.webkitRequestFullScreen();
     } else {
-      el.mozRequestFullScreen();
+      document.documentElement.mozRequestFullScreen();
     }
   }
 }
