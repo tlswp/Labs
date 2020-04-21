@@ -20,15 +20,15 @@ window.onload = function() {
   var backgroundsList = [];
   backgroundLayers = [];
   backgroundLayersSrc = [
-    'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
-    'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png',
-    'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
-  ]
-  backgroundLayersSrc = [
-    'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
-    'backgroundLayers/Layer_0004_lights.png', 'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png', 'backgroundLayers/Layer_0007_lights.png',
-    'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
-  ]
+      'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
+      'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png',
+      'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
+    ]
+    // backgroundLayersSrc = [
+    //   'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
+    //   'backgroundLayers/Layer_0004_lights.png', 'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png', 'backgroundLayers/Layer_0007_lights.png',
+    //   'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
+    // ]
   backgroundLayersSrc = backgroundLayersSrc.reverse();
 
   function generateBackgrounds(x, y) {
