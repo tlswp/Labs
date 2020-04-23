@@ -46,11 +46,11 @@ gen.addEventListener('click', function() {
   }
 });
 var mouseDownStatus = false;
-grid.addEventListener('mousedown', function() {
-  mouseDownStatus = true;
+grid.addEventListener('mousedown', function(event) {
+  if (event.button === 0) { mouseDownStatus = true; }
 });
 grid.addEventListener('mouseup', function() {
-  mouseDownStatus = false;
+  if (event.button === 0) { mouseDownStatus = false; }
 });
 grid.addEventListener('mousemove', function(event) {
   if (mouseDownStatus) {
@@ -80,10 +80,12 @@ grid.addEventListener('mousemove', function(event) {
 });
 genM.addEventListener('click', function() {
   var block = document.querySelectorAll('.block'),
-    count = 0;
+    count = 0,
+    matrixFile = '[';
   var matrix = [];
   for (var y = 0; y < row; y++) {
     matrix[y] = [];
+    matrixFile += '[';
     for (var x = 0; x < column; x++) {
       matrix[y][x] = 0;
       if (block[count].classList.contains('floor')) {
@@ -98,9 +100,21 @@ genM.addEventListener('click', function() {
       if (block[count].classList.contains('skeleton')) {
         matrix[y][x] = 4;
       }
+      if (x < column - 1) {
+        matrixFile += matrix[y][x] + ',';
+      } else {
+        matrixFile += matrix[y][x];
+      }
       count += 1;
     }
+    if (y < row - 1) {
+      matrixFile += '],';
+    } else {
+      matrixFile += ']';
+    }
+
   }
+  matrixFile += ']';
 
   function saveData(data, fileName) {
     var a = document.createElement("a");
@@ -113,13 +127,12 @@ genM.addEventListener('click', function() {
     a.click();
     return window.URL.revokeObjectURL(url);
   }
-
-  var data = '' + matrix,
-    fileName = 'miner';
+  console.log(matrixFile);
+  var data = matrixFile,
+    fileName = 'miner.json';
 
   saveData(data, fileName);
   levelMaps.push(matrix);
-  console.log(matrix);
   levels.innerHTML = '';
   for (var level = 0; level < levelMaps.length; level++) {
     levels.innerHTML += '<div class="level">' + (level + 1) + '</div>';
