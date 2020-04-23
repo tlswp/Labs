@@ -59,6 +59,10 @@ grid.addEventListener('mousemove', function(event) {
         event.target.style.backgroundImage = 'url(img/floor_icon.png)';
         event.target.classList.add('floor');
       }
+      if (type === 'block_bg') {
+        event.target.style.backgroundImage = 'url(img/floor_bg_icon.png)';
+        event.target.classList.add('floor_bg');
+      }
       if (type === 'player') {
         event.target.style.backgroundImage = 'url(img/player_icon.png)';
         event.target.classList.add('player');
@@ -90,6 +94,9 @@ genM.addEventListener('click', function() {
       matrix[y][x] = 0;
       if (block[count].classList.contains('floor')) {
         matrix[y][x] = 1;
+      }
+      if (block[count].classList.contains('floor_bg')) {
+        matrix[y][x] = 5;
       }
       if (block[count].classList.contains('player')) {
         matrix[y][x] = 2;
@@ -175,7 +182,6 @@ function generateBackgrounds(x, y) {
   var backgroundAdded = false;
   while (maxLength * 25 / 928 > count || !backgroundAdded) {
     backgroundAdded = true;
-    console.log(maxLength * 25 / 928)
     var backgroundLayers = [];
     for (var background = 0; background < backgroundLayersSrc.length; background++) {
       backgroundLayers.push(new Background(backgroundLayersSrc[background], 928 * count, levelMaps[levelSelect - 1].length * 25 - 793, 928, 793));
@@ -222,7 +228,25 @@ class Characters {
 var charactersList = [];
 var Player = new Characters('img/rickardo.png', 0, 710, 64, 64, 450, 50, 64, 64, 'player');
 var Skeleton;
-class Floor {
+class CollisionObject {
+  constructor(imageSrc, sx, sy, sw, sh, dx, dy, dw, dh) {
+    this.image = new Image();
+    this.image.src = imageSrc;
+    this.sx = sx;
+    this.sy = sy;
+    this.sw = sw;
+    this.sh = sh;
+    this.dx = dx;
+    this.dy = dy;
+    this.dw = dw;
+    this.dh = dh;
+  };
+  draw() {
+    ctx.drawImage(this.image, this.sx, this.sy, this.sw, this.sh, this.dx, this.dy, this.dw, this.dh);
+  }
+}
+backgroundObject = [];
+class BackgroundObject {
   constructor(imageSrc, sx, sy, sw, sh, dx, dy, dw, dh) {
     this.image = new Image();
     this.image.src = imageSrc;
@@ -272,6 +296,9 @@ var floors = [],
 
 function loop() {
   if (Player.dx >= cvs.width / 2 && maxLength * 25 - Player.mapX >= cvs.width / 2 + 0) {
+    backgroundObjectsList.forEach(backgroundObject => {
+      backgroundObject.dx -= 1;
+    })
     collisionObjectsList.forEach(collisionObjects => {
       collisionObjects.forEach(collisionObject => {
         collisionObject.dx -= 1;
@@ -294,6 +321,9 @@ function loop() {
     });
   }
   if (Player.dx <= (cvs.width / 2) - 5 && Player.mapX > cvs.width / 2) {
+    backgroundObjectsList.forEach(backgroundObject => {
+      backgroundObject.dx += 1;
+    })
     collisionObjectsList.forEach(collisionObjects => {
       collisionObjects.forEach(collisionObject => {
         collisionObject.dx += 1;
@@ -318,29 +348,38 @@ function loop() {
 }
 var levelMaps = [
   [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1],
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 0, 4, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+    [1, 1, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 3, 0, 0, 3, 0, 0, 3, 0, 0, 3, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  ],
+  [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 2, 0, 0, 1, 1, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 1, 0, 3, 3, 3, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   ],
   [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -515,6 +554,7 @@ var levelMap = [
 ];
 var collisionObjectsList = [];
 var intersectionObjects = [];
+var backgroundObjectsList = [];
 
 function randomInteger(min, max) {
   let rand = min - 0.5 + Math.random() * (max - min + 1);
@@ -527,7 +567,7 @@ function generateLevel(levelMap) {
   for (var yCount = 0; yCount < levelMap.length; yCount++) {
     for (var xCount = 0; xCount < levelMap[yCount].length; xCount++) {
       if (levelMap[yCount][xCount] === 1) {
-        floors.push(new Floor('img/floor.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25))
+        floors.push(new CollisionObject('img/floor.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25))
       }
       if (levelMap[yCount][xCount] === 2) {
         Player.mapX = x;
@@ -538,7 +578,10 @@ function generateLevel(levelMap) {
         coins.push(new Collectibles('img/coin.png', 0, 0, 16, 16, x + (25 - 16) / 2, y + (25 - 16) / 2, 16, 16, 'coin'));
       }
       if (levelMap[yCount][xCount] === 4) {
-        charactersList.push(new Characters('img/skeleton.png', 0, 710, 64, 64, x + (25 - 64) / 2, y - 64, 64, 64, 'skeleton'));
+        charactersList.push(new Characters('img/skeleton.png', 0, 710, 64, 64, Math.floor(x + (25 - 64) / 2), y - 64, 64, 64, 'skeleton'));
+      }
+      if (levelMap[yCount][xCount] === 5) {
+        backgroundObjectsList.push(new BackgroundObject('img/floor_background.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25));
       }
       x += 25;
     }
@@ -775,25 +818,25 @@ function physics() {
           ((collisionObject.dx <= character.hitBoxW && character.hitBoxW < collisionObject.dx + collisionObject.dw) ||
             (collisionObject.dx + collisionObject.dw >= character.hitBoxX && collisionObject.dx <= character.hitBoxW))) {
           character.gravitationCount = 0;
+          if (character.character === 'skeleton') {
+            // console.log((character.hitBoxH > collisionObject.dy && character.hitBoxY < collisionObject.dy + collisionObject.dh &&
+            //   character.hitBoxW === collisionObject.dx));
+          }
           if (!character.jumpPressed) {
             character.jumpCount = 0;
           }
         }
         if (character.hitBoxH > collisionObject.dy && character.hitBoxY < collisionObject.dy + collisionObject.dh &&
           character.hitBoxW === collisionObject.dx) {
+          character.route = false;
           character.dx -= 1;
           character.mapX -= 1;
-          if (character.character === 'skeleton') {
-            character.route = false;
-          }
         }
         if (character.hitBoxH > collisionObject.dy && character.hitBoxY < collisionObject.dy + collisionObject.dh &&
           character.hitBoxX === collisionObject.dx + collisionObject.dw) {
+          character.route = true;
           character.dx += 1;
           character.mapX += 1;
-          if (character.character === 'skeleton') {
-            character.route = true;
-          }
         }
       });
     });
@@ -820,6 +863,9 @@ function draw() {
       backgroundLayer.draw();
     });
   });
+  backgroundObjectsList.forEach(backgroundObject => {
+    backgroundObject.draw();
+  });
   collisionObjectsList.forEach(collisionObjects => {
     collisionObjects.forEach(collisionObject => {
       collisionObject.draw();
@@ -832,8 +878,13 @@ function draw() {
       }
     });
   });
+  var c = 0;
   charactersList.forEach(character => {
     ctx.drawImage(character.playerImage, character.sx, character.sy, character.sw, character.sh, character.dx, character.dy, character.dw, character.dh);
+    //   ctx.font = '12px Rubik Mono One';
+    //   ctx.fillStyle = 'white';
+    //   c += 20;
+    //   ctx.fillText(character.hitBoxX + ' ' + character.hitBoxY + ' ' + character.hitBoxW + ' ' + character.hitBoxH + ' dx: ' + character.dx + ' dy: ' + character.dy + ' dw: ' + character.dw + ' dh: ' + character.dh + ' ' + character.route, 0, c);
   });
   if (Sounds.gameMainThemeSound.duration <= Sounds.gameMainThemeSound.currentTime) {
     Sounds.gameMainThemeSound.play();
@@ -847,6 +898,11 @@ function start(levelSelect) {
   window.addEventListener('keydown', keysPressed);
   window.addEventListener('keyup', keysUp);
   generateLevel(levelMaps[levelSelect]);
+  charactersList.forEach(character => {
+    if (character.character === 'skeleton') {
+      character.route = false;
+    }
+  })
   maxLength = [];
   levelMaps[levelSelect].forEach(map => {
     maxLength.push(map.length);
@@ -871,11 +927,12 @@ function close() {
   floors = [];
   coins = [];
   backgroundLayers = [];
+  backgroundObjectsList = [];
   collisionObjectsList = [];
   intersectionObjects = [];
   charactersList = [];
   collectiblesList = [];
-  backgroundsList = []
+  backgroundsList = [];
   clearInterval(loopInterval);
   clearInterval(coinAnimationInterval);
   clearInterval(physicsInterval);
