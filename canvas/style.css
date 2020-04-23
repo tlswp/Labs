@@ -18,6 +18,26 @@ canvas {
   position: fixed;
 }
 
+.grid {
+  top: 0;
+  left: 0;
+  position: fixed;
+  display: grid;
+  overflow-x: auto;
+  overflow-y: visible;
+  max-width: 50vw;
+}
+
+.grid .block {
+  user-select: none;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: solid 1px black;
+}
+
 .menu_wr {
   position: fixed;
   padding: 1em;
