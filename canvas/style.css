@@ -30,6 +30,7 @@ canvas {
 
 .grid .block {
   user-select: none;
+  position: relative;
   width: 20px;
   height: 20px;
   display: flex;
@@ -38,18 +39,58 @@ canvas {
   border: solid 1px rgb(82, 82, 82);
 }
 
+.grid .block div {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+}
+
+.types button {
+  width: 20px;
+  height: 20px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.types button[data-type=block] {
+  background-image: url(img/floor_icon.png);
+}
+
+.types button[data-type=block_bg] {
+  background-image: url(img/floor_bg_icon.png);
+}
+
+.types button[data-type=coin] {
+  background-image: url(img/coin_icon.png);
+}
+
+.types button[data-type=player] {
+  background-position: top;
+  background-image: url(img/player_icon.png);
+}
+
+.types button[data-type=skeleton] {
+  background-position: top;
+  background-image: url(img/skeleton_icon.png);
+}
+
+.types button[data-type=spikes] {
+  background-image: url(img/spikes_icon.png);
+}
+
 .menu_wr {
   position: fixed;
   padding: 1em;
   top: 0;
   right: 0;
-  width: 30%;
+  width: 30em;
   height: 100vh;
   display: flex;
 }
 
 .menu {
-  width: 15em;
+  width: 30em;
   height: 10em;
 }
 
@@ -62,6 +103,7 @@ canvas {
 }
 
 .level {
+  margin-top: 0.5em;
   width: 3em;
   height: 3em;
   display: flex;

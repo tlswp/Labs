@@ -15,23 +15,26 @@
   <canvas id="canvas" width="1590" height="700"></canvas>
   <div class="menu_wr">
     <div class="menu">
+      <div class="level_selected">Уровень:</div>
+      <div class="timer">00:00:00</div>
       <div class="score"></div>
       <div class="levels"></div>
       <input class="name_input" type="text">
       <div class="start_button">Старт</div>
     </div>
     <div>
-      <input type="text" class="rows">
+      <input value="21" type="text" class="rows">
       <input type="text" class="columns">
-      <button class="gen">Сгенерировать</button>
-      <button class="genM">Сгенерировать матрицу</button>
+      <button class="gen button">Открыть конструктор уровней</button>
+      <button class="genM button">Сгенерировать уровень</button>
       <div class="types">
-        <button>eraser</button>
-        <button>block</button>
-        <button>block_bg</button>
-        <button>coin</button>
-        <button>player</button>
-        <button>skeleton</button>
+        <button data-type="eraser"></button>
+        <button data-type="block"></button>
+        <button data-type="block_bg"></button>
+        <button data-type="coin"></button>
+        <button data-type="player"></button>
+        <button data-type="skeleton"></button>
+        <button data-type="spikes"></button>
       </div>
     </div>
     <div class="grid"></div>
