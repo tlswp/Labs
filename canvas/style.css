@@ -1,21 +1,25 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   font-family: 'Rubik Mono One', sans-serif;
+  color: rgb(44, 44, 44);
 }
 
-.canvas_bg {
-  left: 0;
-  top: 0!important;
-  position: fixed;
-  width: 100%;
+.canvas_wr.opened {
+  transform: translateX(-10vw);
+}
+
+.canvas_wr {
+  transition: .5s;
+  justify-content: center;
+  width: 100vw;
   height: 100vh;
-  /* background-image: url(img/background.jpg); */
-  background-position: center;
-  background-size: cover;
+  position: fixed;
+  align-items: center;
+  display: flex;
 }
 
 canvas {
-  position: fixed;
+  transition: .5s;
 }
 
 .grid {
@@ -37,6 +41,15 @@ canvas {
   justify-content: center;
   align-items: center;
   border: solid 1px rgb(82, 82, 82);
+}
+
+.grid .block {
+  transition: .2s;
+  background-color: white;
+}
+
+.grid .block:hover {
+  background-color: rgb(204, 204, 204);
 }
 
 .grid .block div {
@@ -79,11 +92,17 @@ canvas {
   background-image: url(img/spikes_icon.png);
 }
 
+.menu_wr.opened {
+  right: 0;
+}
+
 .menu_wr {
+  background-color: white;
+  transition: .5s;
   position: fixed;
   padding: 1em;
   top: 0;
-  right: 0;
+  right: -100vw;
   width: 30em;
   height: 100vh;
   display: flex;
@@ -109,7 +128,7 @@ canvas {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: black;
+  background-color: rgb(44, 44, 44);
   color: white;
   cursor: pointer;
 }
@@ -129,10 +148,81 @@ canvas {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: black;
+  background-color: rgb(44, 44, 44);
   color: white;
   width: 80%;
   height: 1.6em;
   font-size: 1.5rem;
   cursor: pointer;
+}
+
+.burger_button {
+  font-family: 'Playfair Display', serif;
+  font-weight: bold;
+  width: 3em;
+  height: 3em;
+  border-radius: 3em;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  z-index: 100;
+  justify-content: center;
+  right: 1em;
+  position: fixed;
+  margin-left: 2%;
+  margin-right: 0;
+}
+
+.line_wr {
+  width: 50%;
+}
+
+.burger_line {
+  width: 1.5em;
+  height: 2px;
+  position: absolute;
+  border-radius: 3em;
+  background-color: #393838;
+  transition-duration: .5s;
+}
+
+.burger_line::before {
+  content: '';
+  transform: translateY(-0.4em);
+  width: 1.5em;
+  height: 2px;
+  position: absolute;
+  border-radius: 3em;
+  background-color: #393838;
+  transition-duration: .5s;
+}
+
+.burger_line::after {
+  content: '';
+  transform: translateY(0.4em);
+  width: 1em;
+  height: 2px;
+  position: absolute;
+  border-radius: 3em;
+  background-color: #393838;
+  transition-duration: .5s;
+}
+
+.burger_button.opened .burger_line {
+  width: 0;
+}
+
+.burger_button.opened .burger_line::before {
+  width: 1.5em;
+  height: 2px;
+  border-radius: 3em;
+  transform: rotate(45deg);
+}
+
+.burger_button.opened .burger_line::after {
+  width: 1.5em;
+  height: 2px;
+  border-radius: 3em;
+  transform: rotate(-45deg);
 }

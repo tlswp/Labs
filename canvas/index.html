@@ -11,17 +11,24 @@
 </head>
 
 <body>
-  <div class="canvas_bg"></div>
-  <canvas id="canvas" width="1590" height="700"></canvas>
+  <div class="header_button burger_button">
+    <div class="line_wr">
+      <div class="burger_line"></div>
+    </div>
+  </div>
+  <div class="canvas_wr">
+    <canvas id="canvas" width="1590" height="700"></canvas>
+  </div>
+  <div class="level_selected">Уровень:</div>
+  <div class="timer">00:00:00</div>
+  <div class="score"></div>
   <div class="menu_wr">
     <div class="menu">
-      <div class="level_selected">Уровень:</div>
-      <div class="timer">00:00:00</div>
-      <div class="score"></div>
       <div class="levels"></div>
       <input class="name_input" type="text">
       <div class="start_button">Старт</div>
     </div>
+    <input class="sound_volume" type="range">
     <div>
       <input value="21" type="text" class="rows">
       <input type="text" class="columns">

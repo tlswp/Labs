@@ -1,3 +1,43 @@
+/*jshint esversion: 6 */
+var burgerButton = document.querySelector('.burger_button');
+var menuOpened = false,
+  gameStatus = false;
+
+document.querySelector('.sound_volume').addEventListener('mousemove', function() {
+  var volume = +document.querySelector('.sound_volume').value;
+  Sounds.volume(volume);
+});
+
+function menu(status = 'open') {
+  var canvas_wr = document.querySelector('.canvas_wr'),
+    menu_wr = document.querySelector('.menu_wr');
+  if (status === 'open') {
+    menuOpened = true;
+    burgerButton.classList.add('opened');
+    menu_wr.classList.add('opened');
+    canvas_wr.classList.add('opened');
+  } else {
+    menuOpened = false;
+    burgerButton.classList.remove('opened');
+    menu_wr.classList.remove('opened');
+    canvas_wr.classList.remove('opened');
+  }
+  if (gameStatus) {
+    if (canvas_wr.classList.contains('opened')) {
+      pauseGame();
+    } else {
+      continueGame();
+    }
+  }
+}
+burgerButton.addEventListener('click', function() {
+  if (menuOpened) {
+    menu('close');
+  } else {
+    menu('open');
+  }
+});
+
 var rows = document.querySelector('.rows'),
   columns = document.querySelector('.columns'),
   gen = document.querySelector('.gen'),
@@ -17,7 +57,6 @@ gen.addEventListener('click', function() {
   column = columns.value;
   row = rows.value;
   grid.style.width = columns.value * 20 + 'px';
-  // grid.style.height = rows.value * 20 + 'px';
   grid.style.gridTemplateColumns = `repeat(${columns.value},1fr)`;
   grid.style.gridTemplateRows = `repeat(${rows.value},1fr)`;
   grid.innerHTML = '';
@@ -163,7 +202,7 @@ genM.addEventListener('click', function() {
             matrixFile += ',' + element;
           }
           elementCount += 1;
-        })
+        });
         if (x < column - 1) {
           matrixFile += '],';
         } else {
@@ -240,23 +279,23 @@ class Background {
     this.dy = dy;
     this.dw = dw;
     this.dh = dh;
-  };
+  }
   draw() {
     ctx.drawImage(this.image, this.dx, this.dy, this.dw, this.dh);
   }
 }
-var backgroundsList = [];
-backgroundLayers = [];
-backgroundLayersSrc = [
+var backgroundsList = [],
+  backgroundLayers = [],
+  backgroundLayersSrc = [
     'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
     'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png',
     'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
-  ]
-  // backgroundLayersSrc = [
-  //   'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
-  //   'backgroundLayers/Layer_0004_lights.png', 'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png', 'backgroundLayers/Layer_0007_lights.png',
-  //   'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
-  // ]
+  ];
+// backgroundLayersSrc = [
+//   'backgroundLayers/Layer_0000_9.png', 'backgroundLayers/Layer_0001_8.png', 'backgroundLayers/Layer_0002_7.png', 'backgroundLayers/Layer_0003_6.png',
+//   'backgroundLayers/Layer_0004_lights.png', 'backgroundLayers/Layer_0005_5.png', 'backgroundLayers/Layer_0006_4.png', 'backgroundLayers/Layer_0007_lights.png',
+//   'backgroundLayers/Layer_0008_3.png', 'backgroundLayers/Layer_0009_2.png', 'backgroundLayers/Layer_0010_1.png'
+// ]
 backgroundLayersSrc = backgroundLayersSrc.reverse();
 
 function generateBackgrounds(x, y) {
@@ -309,7 +348,6 @@ class Characters {
 }
 var charactersList = [];
 var Player = new Characters('img/rickardo.png', 0, 710, 64, 64, 450, 50, 64, 64, 'player');
-var Skeleton;
 class CollisionObject {
   constructor(imageSrc, sx, sy, sw, sh, dx, dy, dw, dh) {
     this.image = new Image();
@@ -322,12 +360,11 @@ class CollisionObject {
     this.dy = dy;
     this.dw = dw;
     this.dh = dh;
-  };
+  }
   draw() {
     ctx.drawImage(this.image, this.sx, this.sy, this.sw, this.sh, this.dx, this.dy, this.dw, this.dh);
   }
 }
-backgroundObject = [];
 class BackgroundObject {
   constructor(imageSrc, sx, sy, sw, sh, dx, dy, dw, dh) {
     this.image = new Image();
@@ -340,7 +377,7 @@ class BackgroundObject {
     this.dy = dy;
     this.dw = dw;
     this.dh = dh;
-  };
+  }
   draw() {
     ctx.drawImage(this.image, this.sx, this.sy, this.sw, this.sh, this.dx, this.dy, this.dw, this.dh);
   }
@@ -360,7 +397,7 @@ class Collectibles {
     this.frame = 0;
     this.notCollected = true;
     this.type = type;
-  };
+  }
   draw() {
     ctx.drawImage(this.image, this.sx, this.sy, this.sw, this.sh, this.dx, this.dy, this.dw, this.dh);
   }
@@ -380,7 +417,7 @@ function loop() {
   if ((Player.dx >= cvs.width / 2 && maxLength * 25 - Player.mapX >= cvs.width / 2)) {
     backgroundObjectsList.forEach(backgroundObject => {
       backgroundObject.dx -= 1;
-    })
+    });
     collisionObjectsList.forEach(collisionObjects => {
       collisionObjects.forEach(collisionObject => {
         collisionObject.dx -= 1;
@@ -404,7 +441,7 @@ function loop() {
   } else if ((Player.dx + Player.dw >= cvs.width)) {
     backgroundObjectsList.forEach(backgroundObject => {
       backgroundObject.dx -= 1;
-    })
+    });
     collisionObjectsList.forEach(collisionObjects => {
       collisionObjects.forEach(collisionObject => {
         collisionObject.dx -= 1;
@@ -429,7 +466,7 @@ function loop() {
   if (Player.dx <= (cvs.width / 2) - 3 && Player.mapX > cvs.width / 2) {
     backgroundObjectsList.forEach(backgroundObject => {
       backgroundObject.dx += 1;
-    })
+    });
     collisionObjectsList.forEach(collisionObjects => {
       collisionObjects.forEach(collisionObject => {
         collisionObject.dx += 1;
@@ -676,30 +713,6 @@ var levelMaps = [
     [1, 3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   ],
-]
-var levelMap = [
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 var collisionObjectsList = [];
 var spikes = [];
@@ -717,7 +730,7 @@ function generateLevel(levelMap) {
     for (var xCount = 0; xCount < levelMap[yCount].length; xCount++) {
       if (typeof levelMap[yCount][xCount] === 'number') {
         if (levelMap[yCount][xCount] === 1) {
-          floors.push(new CollisionObject('img/floor.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25))
+          floors.push(new CollisionObject('img/floor.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25));
         }
         if (levelMap[yCount][xCount] === 2) {
           Player.mapX = Math.floor(x + (25 - 64) / 2);
@@ -740,7 +753,7 @@ function generateLevel(levelMap) {
       if (Array.isArray(levelMap[yCount][xCount])) {
         levelMap[yCount][xCount].forEach(element => {
           if (element === 1) {
-            floors.push(new CollisionObject('img/floor.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25))
+            floors.push(new CollisionObject('img/floor.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25));
           }
           if (element === 2) {
             Player.mapX = x;
@@ -879,8 +892,19 @@ var Sounds = {
     new Audio('audio/win_voice_5.flac'), new Audio('audio/win_voice_6.flac'), new Audio('audio/win_voice_7.flac')
   ],
   gameWinSound: new Audio('audio/win_sound.wav'),
-  gameMainThemeSound: new Audio('audio/main_theme.mp3')
-}
+  gameMainThemeSound: new Audio('audio/main_theme.mp3'),
+  volume: (volume) => {
+    volume = volume / 100;
+    Sounds.gameOverSound.volume = volume;
+    Sounds.gameOverVoice.volume = volume;
+    Sounds.gameCoinSound.volume = volume;
+    Sounds.gameWinSound.volume = volume;
+    Sounds.gameMainThemeSound.volume = volume;
+    Sounds.gameWinVoices.forEach(gameWinVoice => {
+      gameWinVoice.volume = volume;
+    })
+  }
+};
 
 function intersection(intersectionObjectList) {
   intersectionObjectList.forEach(intersectionObject => {
@@ -891,10 +915,8 @@ function intersection(intersectionObjectList) {
       if (intersectionObject.character === 'skeleton') {
         setTimeout(function() {
           Sounds.gameOverSound.currentTime = 0;
-          Sounds.gameOverSound.volume = 0.2;
           Sounds.gameOverSound.play();
           Sounds.gameOverVoice.currentTime = 0;
-          Sounds.gameOverVoice.volume = 0.8;
           Sounds.gameOverVoice.play();
           ctx.font = '48px Rubik Mono One';
           ctx.fillStyle = 'white';
@@ -909,10 +931,8 @@ function intersection(intersectionObjectList) {
       if (intersectionObject.type === 'spikes') {
         setTimeout(function() {
           Sounds.gameOverSound.currentTime = 0;
-          Sounds.gameOverSound.volume = 0.2;
           Sounds.gameOverSound.play();
           Sounds.gameOverVoice.currentTime = 0;
-          Sounds.gameOverVoice.volume = 0.8;
           Sounds.gameOverVoice.play();
           ctx.font = '48px Rubik Mono One';
           ctx.fillStyle = 'white';
@@ -992,7 +1012,7 @@ var move = setTimeout(function tick() {
   if (Player.ShiftLeft === false) {
     Player.speed = 10;
   }
-  move = setTimeout(tick, Player.speed)
+  move = setTimeout(tick, Player.speed);
 }, Player.speed);
 var time = 0;
 
@@ -1048,13 +1068,13 @@ function physics() {
 
 function timeFormat(time) {
   function place(n) {
-    return n < 10 ? '0' + n : n
+    return n < 10 ? '0' + n : n;
   }
   var mil, sec, min;
-  mil = place(time % 100)
-  sec = place(parseInt(time / 100) % 60)
-  min = place(parseInt(time / 6000))
-  return min + ':' + sec + ':' + mil
+  mil = place(time % 100);
+  sec = place(parseInt(time / 100) % 60);
+  min = place(parseInt(time / 6000));
+  return min + ':' + sec + ':' + mil;
 }
 
 function coinAnimation() {
@@ -1066,7 +1086,7 @@ function coinAnimation() {
 
 function draw() {
   SceletonMove();
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, cvs.width, cvs.height);
   backgroundsList.forEach(backgroundLayers => {
     backgroundLayers.forEach(backgroundLayer => {
       backgroundLayer.draw();
@@ -1087,49 +1107,42 @@ function draw() {
       }
     });
   });
-  var c = 0;
   charactersList.forEach(character => {
     ctx.drawImage(character.playerImage, character.sx, character.sy, character.sw, character.sh, character.dx, character.dy, character.dw, character.dh);
-    // ctx.font = '12px Rubik Mono One';
-    // ctx.fillStyle = 'white';
-    // c += 20;
-    // ctx.fillText(character.mapX + ' ' + character.hitBoxX + ' ' + character.hitBoxY + ' ' + character.hitBoxW + ' ' + character.hitBoxH + ' dx: ' + character.dx + ' dy: ' + character.dy + ' dw: ' + character.dw + ' dh: ' + character.dh + ' ' + character.route, 0, c);
-    // ctx.fillStyle = 'white';
-    // ctx.fillRect(8, cvs.height - 30, 300, cvs.height - 10);
-    // ctx.font = '24px Rubik Mono One';
-    // ctx.fillStyle = 'black';
-    // ctx.strokeStyle = 'black';
-    // c += 20;
-    // ctx.fillText('Счет: ' + Player.score + '/' + coins.length, 10, cvs.height - 12);
-    //ctx.strokeText('Счет: ' + Player.score + '/' + coins.length, 10, cvs.height - 12);
-
   });
   if (Sounds.gameMainThemeSound.duration <= Sounds.gameMainThemeSound.currentTime) {
     Sounds.gameMainThemeSound.play();
   }
 }
-var loopInterval, timerInterval, sceletonAnimationInterval, coinAnimationInterval, coinPhysicsInterval, physicsInterval, drawInterval, moveAnimationInterval;
+var loopInterval, timerInterval, coinAnimationInterval, physicsInterval, drawInterval, moveAnimationInterval;
 
 function start(levelSelect) {
   close();
+  gameStatus = true;
+  menu('close');
   document.querySelector('.level_selected').innerHTML = 'Уровень: ' + (levelSelect + 1);
-  Sounds.gameMainThemeSound.play();
-  window.addEventListener('keydown', keysPressed);
-  window.addEventListener('keyup', keysUp);
   generateLevel(levelMaps[levelSelect]);
   charactersList.forEach(character => {
     if (character.character === 'skeleton') {
       character.route = false;
     }
-  })
+  });
   maxLength = [];
   levelMaps[levelSelect].forEach(map => {
     maxLength.push(map.length);
   });
   maxLength = Math.max.apply(null, maxLength);
   score.innerHTML = 'Счет: 0/' + coins.length;
-  cvs.style.top = (document.documentElement.clientHeight - levelMaps[levelSelect].length * 25) / 2 + 'px';
   generateBackgrounds(0, levelMaps[levelSelect].length * 25 - 793);
+  continueGame();
+}
+
+function timer() {
+  time += 1;
+  document.querySelector('.timer').innerHTML = timeFormat(time);
+}
+
+function setIntervals() {
   timerInterval = setInterval(timer, 10);
   loopInterval = setInterval(loop, 1);
   coinAnimationInterval = setInterval(coinAnimation, 1000 / 15);
@@ -1138,28 +1151,7 @@ function start(levelSelect) {
   drawInterval = setInterval(draw, 1000 / 30);
 }
 
-function timer() {
-  time += 1;
-  document.querySelector('.timer').innerHTML = timeFormat(time);
-}
-
-function close() {
-  time = 0;
-  Sounds.gameMainThemeSound.currentTime = 0;
-  Sounds.gameMainThemeSound.pause();
-  Player.score = 0;
-  window.removeEventListener('keydown', keysPressed);
-  window.removeEventListener('keydown', keysUp);
-  floors = [];
-  coins = [];
-  spikes = [];
-  backgroundLayers = [];
-  backgroundObjectsList = [];
-  collisionObjectsList = [];
-  intersectionObjects = [];
-  charactersList = [];
-  collectiblesList = [];
-  backgroundsList = [];
+function clearIntervals() {
   clearInterval(timerInterval);
   clearInterval(loopInterval);
   clearInterval(coinAnimationInterval);
@@ -1167,12 +1159,54 @@ function close() {
   clearInterval(drawInterval);
   clearInterval(moveAnimationInterval);
 }
+
+function close() {
+  gameStatus = false;
+  time = 0;
+  Sounds.gameMainThemeSound.currentTime = 0;
+  Player.score = 0;
+  floors = [];
+  coins = [];
+  spikes = [];
+  backgroundLayers = [];
+  backgroundObjectsList = [];
+  collisionObjectsList = [];
+  charactersList = [];
+  collectiblesList = [];
+  backgroundsList = [];
+  pauseGame();
+}
+var pauseStatus = true;
+
+function pauseGame() {
+  if (!pauseStatus) {
+    pauseStatus = true;
+    Sounds.gameMainThemeSound.pause();
+    window.removeEventListener('keydown', keysPressed);
+    window.removeEventListener('keydown', keysUp);
+    clearIntervals();
+  }
+}
+
+function continueGame() {
+  if (pauseStatus) {
+    pauseStatus = false;
+    Sounds.gameMainThemeSound.play();
+    window.addEventListener('keydown', keysPressed);
+    window.addEventListener('keyup', keysUp);
+    setIntervals();
+  }
+}
 //start();
 window.addEventListener('keydown', function() {
   if (this.event.key === 'Escape') {
-    close();
+    if (menuOpened) {
+      menu('close');
+    } else {
+      menu('open');
+    }
   }
-})
+});
 
 var levels = document.querySelector('.levels'),
   score = document.querySelector('.score'),
@@ -1185,12 +1219,12 @@ levels.addEventListener('click', function(event) {
   if (event.target.className === 'level') {
     levelSelect = event.target.innerHTML;
   }
-})
+});
 document.querySelector('.start_button').addEventListener('click', function() {
   start(levelSelect - 1);
   fullscreen();
 });
-window.onload = function() {}
+window.onload = function() {};
 
 function fullscreen() {
   // var el = document.getElementById('canvas');
