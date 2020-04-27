@@ -1116,7 +1116,7 @@ function draw() {
 }
 var loopInterval, timerInterval, coinAnimationInterval, physicsInterval, drawInterval, moveAnimationInterval;
 
-function start(levelSelect) {
+function start(levelSelect, continueStatus = true) {
   close();
   gameStatus = true;
   menu('close');
@@ -1134,7 +1134,9 @@ function start(levelSelect) {
   maxLength = Math.max.apply(null, maxLength);
   score.innerHTML = 'Счет: 0/' + coins.length;
   generateBackgrounds(0, levelMaps[levelSelect].length * 25 - 793);
-  continueGame();
+  if (continueStatus) {
+    continueGame();
+  }
 }
 
 function timer() {
@@ -1218,13 +1220,31 @@ levels.addEventListener('click', function(event) {
   console.log(event.target);
   if (event.target.className === 'level') {
     levelSelect = event.target.innerHTML;
+    window.localStorage.setItem('levelSelect', levelSelect);
   }
 });
 document.querySelector('.start_button').addEventListener('click', function() {
   start(levelSelect - 1);
   fullscreen();
 });
-window.onload = function() {};
+window.onload = function() {
+  if (window.localStorage.getItem('levelSelect') !== null) {
+    levelSelect = window.localStorage.getItem('levelSelect');
+    continueButton = document.createElement('div');
+    continueButton.classList.add('continue_button');
+    continueButton.innerHTML = 'Нажмите пробел, чтобы начать.';
+    document.body.appendChild(continueButton);
+    window.addEventListener('keydown', continueGameOnload);
+  }
+};
+
+function continueGameOnload() {
+  if (event.key === ' ') {
+    start(window.localStorage.getItem('levelSelect') - 1);
+    continueButton.innerHTML = '';
+    window.removeEventListener('keydown', continueGameOnload);
+  }
+}
 
 function fullscreen() {
   // var el = document.getElementById('canvas');
