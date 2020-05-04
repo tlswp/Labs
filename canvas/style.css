@@ -14,8 +14,12 @@ body {
   height: 100vh;
 }
 
+.konamiMode {
+  transform: scale(1.2) rotate(3deg);
+}
+
 .canvas_wr.opened {
-  transform: translateX(-10vw);
+  transform: translateX(-10vw)!important;
 }
 
 .canvas_wr {

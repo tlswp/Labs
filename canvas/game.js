@@ -7,7 +7,8 @@ var konamiCodeUserKeysList = [],
     skeleton: 'img/skeleton.png',
     floor_background: 'img/floor_background.jpg',
     spikes: 'img/spikes.png'
-  };
+  },
+  konamiMode = false;
 
 function konamiCode(event) {
   konamiCodeUserKeysList.push(event.key);
@@ -25,6 +26,8 @@ function konamiCode(event) {
         character.image.src = 'img/rickardo_skeleton.png';
       }
     });
+    document.querySelector('.canvas_wr').classList.add('konamiMode');
+    konamiMode = true;
   }
 }
 
@@ -455,6 +458,9 @@ var floors = [],
   maxLength = [];
 // || (Player.dx + maxLength * 25 - Player.mapX >= cvs.width)
 function loop() {
+  if (konamiMode) {
+    document.querySelector('.konamiMode').style.transform = 'scale(1.4) rotate(' + (((Player.mapX + 15) - (maxLength * 25) / 2) / (maxLength * 2.5)) + 'deg)';
+  }
   if ((Player.dx >= cvs.width / 2 && maxLength * 25 - Player.mapX >= cvs.width / 2)) {
     backgroundObjectsList.forEach(backgroundObject => {
       backgroundObject.dx -= 1;
