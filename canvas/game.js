@@ -1284,6 +1284,7 @@ function continueGameOnload() {
   if (event.key === ' ') {
     start(window.localStorage.getItem('levelSelect') - 1);
     continueButton.innerHTML = '';
+    continueButton.style.display = 'none';
     window.removeEventListener('keydown', continueGameOnload);
   }
 }
