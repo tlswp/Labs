@@ -1,4 +1,45 @@
 /*jshint esversion: 6 */
+var konamiCodeUserKeysList = [],
+  konamiCodeKeysList = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'],
+  Images = {
+    floor: 'img/floor.jpg',
+    coin: 'img/coin.png',
+    skeleton: 'img/skeleton.png',
+    floor_background: 'img/floor_background.jpg',
+    spikes: 'img/spikes.png'
+  };
+
+function konamiCode(event) {
+  konamiCodeUserKeysList.push(event.key);
+  if (konamiCodeUserKeysList.length > 10) {
+    konamiCodeUserKeysList.shift();
+  }
+  if (arraysEquals(konamiCodeKeysList, konamiCodeUserKeysList)) {
+    console.log(konamiCodeUserKeysList);
+    Player.image.src = 'img/rickardo.png';
+    Sounds.gameMainThemeSound.src = 'audio/rickardo_music.mp3';
+    Sounds.gameMainThemeSound.play();
+    Images.skeleton = 'img/rickardo_skeleton.png';
+    charactersList.forEach(character => {
+      if (character.character === 'skeleton') {
+        character.image.src = 'img/rickardo_skeleton.png';
+      }
+    });
+  }
+}
+
+function arraysEquals(array1, array2) {
+  var answer = false;
+  if (array1.length === array2.length) {
+    answer = true;
+    for (var count = 0; count < array1.length; count++) {
+      if (array1[count] !== array2[count]) {
+        answer = false;
+      }
+    }
+  }
+  return answer;
+}
 var burgerButton = document.querySelector('.burger_button');
 var menuOpened = false,
   gameStatus = false;
@@ -312,9 +353,9 @@ function generateBackgrounds(x, y) {
   }
 }
 class Characters {
-  constructor(playerImageLink, sx, sy, sw, sh, dx, dy, dw, dh, character) {
-    this.playerImage = new Image();
-    this.playerImage.src = playerImageLink;
+  constructor(imageLink, sx, sy, sw, sh, dx, dy, dw, dh, character) {
+    this.image = new Image();
+    this.image.src = imageLink;
     this.sx = sx;
     this.sy = sy;
     this.sw = sw;
@@ -347,7 +388,7 @@ class Characters {
   }
 }
 var charactersList = [];
-var Player = new Characters('img/rickardo.png', 0, 710, 64, 64, 450, 50, 64, 64, 'player');
+var Player = new Characters('img/player_sprites.png', 0, 710, 64, 64, 450, 50, 64, 64, 'player');
 class CollisionObject {
   constructor(imageSrc, sx, sy, sw, sh, dx, dy, dw, dh) {
     this.image = new Image();
@@ -730,7 +771,7 @@ function generateLevel(levelMap) {
     for (var xCount = 0; xCount < levelMap[yCount].length; xCount++) {
       if (typeof levelMap[yCount][xCount] === 'number') {
         if (levelMap[yCount][xCount] === 1) {
-          floors.push(new CollisionObject('img/floor.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25));
+          floors.push(new CollisionObject(Images.floor, randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25));
         }
         if (levelMap[yCount][xCount] === 2) {
           Player.mapX = Math.floor(x + (25 - 64) / 2);
@@ -738,22 +779,22 @@ function generateLevel(levelMap) {
           Player.dy = y - Player.dh;
         }
         if (levelMap[yCount][xCount] === 3) {
-          coins.push(new Collectibles('img/coin.png', 0, 0, 16, 16, x + (25 - 16) / 2, y + (25 - 16) / 2, 16, 16, 'coin'));
+          coins.push(new Collectibles(Images.coin, 0, 0, 16, 16, x + (25 - 16) / 2, y + (25 - 16) / 2, 16, 16, 'coin'));
         }
         if (levelMap[yCount][xCount] === 4) {
-          charactersList.push(new Characters('img/skeleton.png', 0, 710, 64, 64, Math.floor(x + (25 - 64) / 2), y - 64, 64, 64, 'skeleton'));
+          charactersList.push(new Characters(Images.skeleton, 0, 710, 64, 64, Math.floor(x + (25 - 64) / 2), y - 64, 64, 64, 'skeleton'));
         }
         if (levelMap[yCount][xCount] === 5) {
-          backgroundObjectsList.push(new BackgroundObject('img/floor_background.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25));
+          backgroundObjectsList.push(new BackgroundObject(Images.floor_background, randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25));
         }
         if (levelMap[yCount][xCount] === 6) {
-          spikes.push(new Collectibles('img/spikes.png', 0, 0, 25, 12, x, y + 25 - 12, 25, 12, 'spikes'));
+          spikes.push(new Collectibles(Images.spikes, 0, 0, 25, 12, x, y + 25 - 12, 25, 12, 'spikes'));
         }
       }
       if (Array.isArray(levelMap[yCount][xCount])) {
         levelMap[yCount][xCount].forEach(element => {
           if (element === 1) {
-            floors.push(new CollisionObject('img/floor.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25));
+            floors.push(new CollisionObject(Images.floor, randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25));
           }
           if (element === 2) {
             Player.mapX = x;
@@ -761,16 +802,16 @@ function generateLevel(levelMap) {
             Player.dy = y - Player.dh;
           }
           if (element === 3) {
-            coins.push(new Collectibles('img/coin.png', 0, 0, 16, 16, x + (25 - 16) / 2, y + (25 - 16) / 2, 16, 16, 'coin'));
+            coins.push(new Collectibles(Images.coin, 0, 0, 16, 16, x + (25 - 16) / 2, y + (25 - 16) / 2, 16, 16, 'coin'));
           }
           if (element === 4) {
-            charactersList.push(new Characters('img/skeleton.png', 0, 710, 64, 64, Math.floor(x + (25 - 64) / 2), y - 64, 64, 64, 'skeleton'));
+            charactersList.push(new Characters(Images.skeleton, 0, 710, 64, 64, Math.floor(x + (25 - 64) / 2), y - 64, 64, 64, 'skeleton'));
           }
           if (element === 5) {
-            backgroundObjectsList.push(new BackgroundObject('img/floor_background.jpg', randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25));
+            backgroundObjectsList.push(new BackgroundObject(Images.floor_background, randomInteger(0, 3) * 512 / 4, randomInteger(0, 3) * 512 / 4, 512 / 4, 512 / 4, x, y, 25, 25));
           }
           if (element === 6) {
-            spikes.push(new Collectibles('img/spikes.png', 0, 0, 25, 12, x, y + 25 - 12, 25, 12, 'spikes'));
+            spikes.push(new Collectibles(Images.spikes, 0, 0, 25, 12, x, y + 25 - 12, 25, 12, 'spikes'));
           }
         });
       }
@@ -787,6 +828,7 @@ function generateLevel(levelMap) {
 }
 
 function keysPressed(event) {
+  konamiCode(event);
   switch (event.code) {
     case 'KeyD':
       Player.KeyD = true;
@@ -902,7 +944,7 @@ var Sounds = {
     Sounds.gameMainThemeSound.volume = volume;
     Sounds.gameWinVoices.forEach(gameWinVoice => {
       gameWinVoice.volume = volume;
-    })
+    });
   }
 };
 
@@ -1108,7 +1150,7 @@ function draw() {
     });
   });
   charactersList.forEach(character => {
-    ctx.drawImage(character.playerImage, character.sx, character.sy, character.sw, character.sh, character.dx, character.dy, character.dw, character.dh);
+    ctx.drawImage(character.image, character.sx, character.sy, character.sw, character.sh, character.dx, character.dy, character.dw, character.dh);
   });
   if (Sounds.gameMainThemeSound.duration <= Sounds.gameMainThemeSound.currentTime) {
     Sounds.gameMainThemeSound.play();
