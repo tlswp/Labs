@@ -15,7 +15,7 @@ body {
 }
 
 .konamiMode {
-  transform: scale(1.2) rotate(3deg);
+  transform: scale(1.4) rotate(3deg);
 }
 
 .canvas_wr.opened {
